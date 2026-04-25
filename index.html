@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="나눔환경 스마트AI">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#E8520A">
+<link rel="manifest" id="pwa-manifest">
+<title>나눔환경 스마트AI 안전출근부</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+/* ══ CSS 변수 (하이픈 2개 정확히 수정) ══ */
+:root{
+  --org:#E8520A;--org-lt:#FDE8DC;--org-dk:#B33D08;
+  --grn:#1B8A3E;--grn-lt:#E6F5EC;
+  --red:#D32F2F;--red-lt:#FFEBEE;
+  --blue:#1565C0;--blue-lt:#E3F2FD;
+  --gray:#F7F7F7;--gray2:#EEEEEE;--bdr:#E0E0E0;
+  --text:#1A1A1A;--text2:#666;--text3:#BBB;
+  --r:16px;--rs:12px;
+  --st:env(safe-area-inset-top,0px);
+  --sb:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;-webkit-text-size-adjust:100%;background:#F0F0F0}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--text);max-width:430px;margin:0 auto}
+input,select,textarea,button{font-family:'Noto Sans KR',sans-serif;-webkit-appearance:none;font-size:16px!important}
+
+/* ══ 인앱 안내 ══ */
+#screen-inapp{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;background:#FAE100;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#screen-inapp .wrap{display:flex;flex-direction:column;align-items:center;padding:max(48px,env(safe-area-inset-top,48px)) 20px max(48px,env(safe-area-inset-bottom,48px));min-height:100%}
+.kk-logo{font-size:58px;margin-bottom:12px;line-height:1}
+.kk-h1{font-size:24px;font-weight:900;color:#2C1A00;text-align:center;margin-bottom:6px;line-height:1.3}
+.kk-h2{font-size:14px;color:#5C3A00;text-align:center;margin-bottom:22px;line-height:1.7}
+.kk-card{background:#fff;border-radius:20px;width:100%;padding:18px 20px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.kk-card-t{font-size:15px;font-weight:700;color:var(–text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.kk-step{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #F0F0F0}
+.kk-step:last-child{border-bottom:none}
+.kk-step-n{min-width:28px;height:28px;border-radius:50%;background:var(–org);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kk-step-t{font-size:14px;line-height:1.8;color:var(–text);flex:1}
+.kk-step-t b{color:#B33D08}
+.kk-main-btn{width:100%;padding:18px;background:var(–org);color:#fff;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;margin-bottom:10px;min-height:58px;box-shadow:0 4px 16px rgba(232,82,10,.35)}
+.kk-sub-btn{width:100%;padding:14px;background:rgba(0,0,0,.08);color:#3A1D00;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;min-height:50px}
+.kk-notice{font-size:12px;color:#7A5000;text-align:center;line-height:1.8;padding:12px;background:rgba(0,0,0,.06);border-radius:12px;width:100%}
+
+/* ══ 로그인 화면 ══ */
+#screen-login{display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#E8520A 0%,#993C1D 100%);flex-direction:column;align-items:center;padding:max(40px,var(–st)) 20px max(40px,var(–sb));overflow-y:auto;-webkit-overflow-scrolling:touch}
+#screen-login.show{display:flex}
+.lg-logo{font-size:54px;margin-bottom:8px}
+.lg-brand{font-size:22px;font-weight:900;color:#fff;text-align:center;line-height:1.3;margin-bottom:4px}
+.lg-sub{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:20px;text-align:center}
+.lg-adm-btn{width:100%;max-width:360px;padding:13px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);border-radius:var(–rs);color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;min-height:48px}
+.lg-card{background:#fff;border-radius:20px;padding:22px 20px;width:100%;max-width:360px;margin-bottom:12px;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.lg-card h3{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.lg-lbl{font-size:13px;font-weight:700;color:var(–text2);margin-bottom:6px;display:block;margin-top:14px}
+.lg-lbl:first-of-type{margin-top:0}
+.lg-inp{width:100%;padding:15px 16px;border:2px solid var(–bdr);border-radius:var(–rs);color:var(–text);outline:none;background:#fff;transition:border-color .2s}
+.lg-inp:focus{border-color:var(–org)}
+.lg-btn{width:100%;padding:16px;background:var(–org);color:#fff;border:none;border-radius:var(–rs);font-size:17px;font-weight:700;cursor:pointer;margin-top:14px;min-height:54px;box-shadow:0 4px 12px rgba(232,82,10,.3)}
+.lg-err{font-size:13px;color:#FF6B6B;text-align:center;margin-top:8px;min-height:18px;font-weight:500}
+.lg-hint{font-size:12px;color:var(–text2);text-align:center;margin-top:10px;line-height:1.8;padding:10px;background:var(–gray);border-radius:10px}
+.lg-install-btn{width:100%;max-width:360px;padding:12px;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.35);border-radius:var(–rs);color:rgba(255,255,255,.85);font-size:13px;font-weight:600;cursor:pointer}
+
+/* ══ 모달 ══ */
+.modal-ov{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+.modal-ov.show{display:flex}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding-bottom:max(20px,var(–sb));animation:su .32s ease;max-height:92vh;overflow-y:auto}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:44px;height:5px;background:#ddd;border-radius:3px;margin:14px auto 0}
+.modal-hdr{padding:16px 22px 14px;border-bottom:1px solid var(–gray2)}
+.modal-hdr-t{font-size:18px;font-weight:700}
+.modal-hdr-s{font-size:13px;color:var(–text2);margin-top:3px}
+.modal-body{padding:18px 22px}
+.modal-step{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(–gray2)}
+.modal-step:last-child{border-bottom:none}
+.modal-n{width:30px;height:30px;border-radius:50%;background:var(–org);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-t{font-size:14px;line-height:1.8;flex:1}
+.modal-t b{color:var(–org-dk)}
+.modal-btn{width:100%;padding:15px;background:var(–org);color:#fff;border:none;border-radius:var(–rs);font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;min-height:52px}
+.modal-btn2{width:100%;padding:13px;background:var(–gray);color:var(–text);border:1px solid var(–bdr);border-radius:var(–rs);font-size:14px;cursor:pointer;margin-top:8px}
+.modal-note{font-size:12px;color:var(–text2);text-align:center;margin-top:10px;line-height:1.7}
+.modal-hdr-blue{background:var(–blue);padding:22px;border-radius:24px 24px 0 0}
+.modal-hdr-blue .modal-hdr-t{color:#fff}
+.modal-hdr-blue .modal-hdr-s{color:rgba(255,255,255,.75)}
+.modal-lbl{font-size:13px;font-weight:700;color:var(–text2);margin-bottom:6px;display:block;margin-top:14px}
+.modal-lbl:first-of-type{margin-top:0}
+.modal-inp{width:100%;padding:14px 16px;border:2px solid var(–bdr);border-radius:var(–rs);color:var(–text);outline:none;background:#fff}
+.modal-inp:focus{border-color:var(–blue)}
+.modal-btn-blue{width:100%;padding:15px;background:var(–blue);color:#fff;border:none;border-radius:var(–rs);font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;min-height:52px}
+.modal-err{font-size:13px;color:var(–red);text-align:center;margin-top:8px;min-height:18px;font-weight:500}
+
+/* ══ 공유 패널 ══ */
+.share-item{display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(–r);margin-bottom:10px;cursor:pointer;border:2px solid transparent;transition:opacity .15s}
+.share-item:active{opacity:.8}
+.share-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.share-label{font-size:15px;font-weight:700}
+.share-desc{font-size:12px;color:var(–text2);margin-top:2px}
+
+/* ══ 앱 본체 ══ */
+#app{display:none}
+.screen{display:none;padding-bottom:calc(76px + var(–sb));min-height:100vh}
+.screen.active{display:block}
+.hdr{background:#fff;padding:calc(12px + var(–st)) 18px 12px;border-bottom:1px solid var(–bdr);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.hdr-row{display:flex;justify-content:space-between;align-items:center}
+.hdr-t{font-size:17px;font-weight:700}
+.hdr-s{font-size:11px;color:var(–text2);margin-top:2px}
+.p16{padding:14px 16px 0}
+.sect-t{font-size:14px;font-weight:700;margin-bottom:10px}
+.card{background:#fff;border-radius:var(–r);padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.badge{font-size:12px;padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap}
+.b-in{background:var(–grn-lt);color:var(–grn)}
+.b-out{background:var(–gray2);color:var(–text2)}
+.b-late{background:var(–red-lt);color:var(–red)}
+.b-warn{background:#FFF3E0;color:#E65100}
+.b-org{background:var(–org-lt);color:var(–org-dk)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 16px 12px}
+.sbox{background:#fff;border-radius:var(–r);padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.sl{font-size:12px;color:var(–text2);margin-bottom:4px}
+.sv{font-size:26px;font-weight:900}
+.su{font-size:13px;font-weight:400;color:var(–text2)}
+.staff-wrap{background:#fff;border-radius:var(–r);padding:6px 16px;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.srow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(–gray2)}
+.srow:last-child{border-bottom:none}
+.av{width:36px;height:36px;border-radius:50%;background:var(–org-lt);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(–org-dk);flex-shrink:0}
+.si{flex:1;min-width:0}
+.sn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sd{font-size:12px;color:var(–text2);margin-top:2px}
+.tag{display:inline-flex;align-items:center;font-size:11px;padding:2px 7px;border-radius:12px;font-weight:700;margin-left:4px;vertical-align:middle}
+.gps-box{background:#fff;border:2px solid var(–bdr);border-radius:var(–r);padding:16px;text-align:center;margin:0 16px 10px;transition:all .3s}
+.gps-box.ok{border-color:var(–grn);background:var(–grn-lt)}
+.gps-addr{font-size:15px;font-weight:700}
+.gps-det{font-size:12px;color:var(–text2);margin-top:3px}
+.act-btn{display:block;width:calc(100% - 32px);margin:0 16px 10px;padding:18px;border-radius:var(–r);font-size:17px;font-weight:700;border:none;cursor:pointer;text-align:center;min-height:58px;transition:transform .1s,opacity .15s}
+.act-btn:active{transform:scale(.97);opacity:.85}
+.act-btn:disabled{opacity:.35;cursor:default;transform:none}
+.ab-org{background:var(–org);color:#fff;box-shadow:0 4px 14px rgba(232,82,10,.3)}
+.ab-grn{background:var(–grn);color:#fff}
+.ab-sec{background:#fff;color:var(–text);border:2px solid var(–bdr)}
+.ab-blue{background:var(–blue);color:#fff;box-shadow:0 4px 14px rgba(21,101,192,.3)}  /* ← ab-blue 추가 */
+.ab-red{background:var(–red);color:#fff}
+.prog-wrap{background:var(–gray2);border-radius:6px;height:8px;overflow:hidden;margin:8px 0 0}
+.prog-fill{height:100%;border-radius:6px;background:var(–org);transition:width .35s}
+.ck-item{background:#fff;border:2px solid var(–bdr);border-radius:var(–r);padding:16px;margin:0 0 10px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:all .2s;min-height:58px}
+.ck-item.done{border-color:var(–grn);background:var(–grn-lt)}
+.ck-circle{width:28px;height:28px;border-radius:50%;border:2.5px solid var(–bdr);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:15px;font-weight:700;color:transparent;margin-top:2px}
+.ck-item.done .ck-circle{background:var(–grn);border-color:var(–grn);color:#fff}
+.ck-tw{flex:1}
+.ck-t{font-size:15px;line-height:1.4}
+.ck-item.done .ck-t{color:var(–grn)}
+.ck-c{font-size:12px;color:var(–text2);margin-top:3px}
+.ck-item.done .ck-c{color:var(–grn)}
+.sig-box{background:#fff;border:2.5px dashed var(–bdr);border-radius:var(–r);height:78px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 0 10px;transition:all .2s}
+.sig-box.ok{border-style:solid;border-color:var(–grn);background:var(–grn-lt)}
+.sig-t{font-size:14px;color:var(–text3);text-align:center;line-height:1.6;padding:0 16px}
+.sig-box.ok .sig-t{color:var(–grn);font-weight:700}
+.acc-big{background:linear-gradient(135deg,var(–org),var(–org-dk));border-radius:var(–r);padding:24px;text-align:center;color:#fff;margin:14px 16px 12px;box-shadow:0 4px 16px rgba(232,82,10,.3)}
+.acc-num{font-size:68px;font-weight:900;line-height:1}
+.goal-bar-wrap{background:var(–grn-lt);border-radius:var(–r);padding:16px;margin:0 16px 12px;border:1px solid #A5D6A7}
+.goal-track{background:#fff;border-radius:6px;height:10px;overflow:hidden;margin:8px 0 6px}
+.goal-fill{height:100%;border-radius:6px;background:var(–grn)}
+.divider{height:8px;background:#E8E8E8;margin:14px 0}
+.search-inp{width:100%;padding:12px 16px;border:2px solid var(–bdr);border-radius:50px;font-size:14px;outline:none;background:#fff}
+.search-inp:focus{border-color:var(–org)}
+.filt-row{display:flex;gap:7px;overflow-x:auto;padding:0 16px 4px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.filt-row::-webkit-scrollbar{display:none}
+.fb{padding:8px 14px;border-radius:20px;border:2px solid var(–bdr);background:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;color:var(–text2)}
+.fb.on{background:var(–org);border-color:var(–org);color:#fff}
+.adm-form{background:var(–gray);border-radius:var(–r);padding:16px;margin-bottom:12px}
+.adm-inp{width:100%;padding:13px 15px;border:2px solid var(–bdr);border-radius:var(–rs);color:var(–text);outline:none;background:#fff;margin-bottom:10px}
+.adm-inp:focus{border-color:var(–org)}
+.adm-sel{width:100%;padding:12px 14px;border:2px solid var(–bdr);border-radius:var(–rs);color:var(–text);outline:none;background:#fff;margin-bottom:10px;font-size:14px}
+.adm-grid{display:grid;grid-template-columns:2fr 1fr 1.3fr;gap:8px;margin-bottom:10px}
+.adm-grid-lbl{font-size:11px;color:var(–text2);margin-bottom:4px;font-weight:700}
+.adm-chip{background:var(–blue-lt);color:var(–blue);font-size:11px;padding:3px 8px;border-radius:12px;font-weight:700}
+.ck-add-box{background:var(–org-lt);border:2px dashed var(–org);border-radius:var(–r);padding:16px;margin:0 16px 8px}
+.ck-add-inp{width:100%;padding:14px 16px;border:2px solid var(–bdr);border-radius:var(–rs);font-size:15px;outline:none;background:#fff;margin-bottom:10px}
+.ck-add-inp:focus{border-color:var(–org)}
+.ck-add-sel{width:100%;padding:12px 14px;border:2px solid var(–bdr);border-radius:var(–rs);font-size:14px;outline:none;background:#fff;margin-bottom:10px;color:var(–text)}
+.ck-list-wrap{margin:0 16px}
+.ck-list-cat{font-size:12px;font-weight:700;color:var(–text2);padding:10px 4px 6px;display:flex;align-items:center;gap:6px}
+.ck-edit-row{background:#fff;border-radius:var(–r);padding:14px 16px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.ck-edit-view{display:flex;align-items:center;gap:12px}
+.ck-edit-dot{width:8px;height:8px;border-radius:50%;background:var(–org);flex-shrink:0}
+.ck-edit-txt{flex:1;font-size:15px;line-height:1.4}
+.ck-edit-btns{display:flex;gap:6px;flex-shrink:0}
+.ck-ebtn{border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;min-height:36px}
+.ck-ebtn-e{background:var(–org-lt);color:var(–org-dk)}
+.ck-ebtn-d{background:var(–red-lt);color:var(–red)}
+.ck-editform{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(–gray2)}
+.ck-editform-inp{width:100%;padding:12px 14px;border:2px solid var(–org);border-radius:var(–rs);font-size:15px;outline:none;background:#FFFAF8;margin-bottom:8px}
+.ck-editform-sel{width:100%;padding:10px 12px;border:2px solid var(–bdr);border-radius:var(–rs);font-size:14px;outline:none;background:#fff;margin-bottom:10px;color:var(–text)}
+.ck-editform-btns{display:flex;gap:8px}
+.ck-ef-save{flex:1;padding:12px;background:var(–grn);color:#fff;border:none;border-radius:var(–rs);font-size:14px;font-weight:700;cursor:pointer;min-height:44px}
+.ck-ef-cancel{padding:12px 16px;background:var(–gray);color:var(–text);border:1px solid var(–bdr);border-radius:var(–rs);font-size:14px;cursor:pointer;min-height:44px}
+.errt{font-size:13px;color:var(–red);text-align:center;min-height:18px;margin-top:5px;font-weight:500}
+
+/* ══ AI 채팅 스타일 ══ */
+.chat-wrap{margin:0 16px 12px}
+.chat-box{background:#fff;border-radius:var(–r);padding:14px;min-height:260px;max-height:340px;overflow-y:auto;border:2px solid var(–bdr);margin-bottom:10px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.chat-msg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.65;word-break:keep-all}
+.chat-ai{background:var(–gray);border-bottom-left-radius:4px;align-self:flex-start;color:var(–text)}
+.chat-user{background:var(–org);border-bottom-right-radius:4px;align-self:flex-end;color:#fff}
+.chat-loading{background:var(–gray);align-self:flex-start;padding:11px 14px;border-radius:14px;font-size:13px;color:var(–text2)}
+.chat-inp-row{display:flex;gap:8px;align-items:flex-end}
+.chat-inp{flex:1;padding:12px 14px;border:2px solid var(–bdr);border-radius:var(–rs);resize:none;outline:none;font-size:15px!important;line-height:1.4}
+.chat-inp:focus{border-color:var(–org)}
+.chat-send{background:var(–org);color:#fff;border:none;border-radius:var(–rs);padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;min-height:48px;white-space:nowrap}
+.chat-send:disabled{opacity:.4;cursor:default}
+.quick-btns{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px;margin-bottom:10px}
+.qb{padding:8px 12px;background:#fff;border:2px solid var(–org);border-radius:20px;font-size:12px;font-weight:700;color:var(–org-dk);cursor:pointer}
+.qb:active{background:var(–org-lt)}
+
+/* ══ 계산기 스타일 ══ */
+.calc-wrap{margin:0 16px}
+.calc-card{background:#fff;border-radius:var(–r);padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.calc-t{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.calc-lbl{font-size:12px;font-weight:700;color:var(–text2);margin-bottom:5px}
+.calc-inp{width:100%;padding:12px 14px;border:2px solid var(–bdr);border-radius:var(–rs);font-size:15px!important;outline:none;background:#fff}
+.calc-inp:focus{border-color:var(–org)}
+.calc-result{background:linear-gradient(135deg,var(–org),var(–org-dk));border-radius:var(–rs);padding:16px;color:#fff;margin-top:12px;text-align:center;display:none}
+.calc-result-n{font-size:28px;font-weight:900}
+.calc-result-s{font-size:13px;opacity:.85;margin-top:4px}
+
+/* ══ 탭바 ══ */
+.tab-bar{display:flex;background:#fff;border-top:2px solid var(–bdr);position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100;padding-bottom:max(var(–sb),6px)}
+.tab{flex:1;padding:8px 2px 6px;text-align:center;color:var(–text2);cursor:pointer;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;min-height:52px}
+.tab svg{width:22px;height:22px;stroke-width:2}
+.tab.active{color:var(–org)}
+#fab-wrap{position:fixed;bottom:calc(90px + var(–sb));right:16px;z-index:8000;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab{width:56px;height:56px;border-radius:50%;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(0,0,0,.28)}
+#toast{position:fixed;bottom:calc(88px + var(–sb));left:50%;transform:translateX(-50%);background:rgba(10,10,10,.92);color:#fff;font-size:14px;font-weight:500;padding:12px 24px;border-radius:28px;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;z-index:999999;max-width:90%}
+#toast.show{opacity:1}
+</style>
+
+</head>
+<body>
+
+<!-- ══ 인앱 안내 ══ -->
+
+<div id="screen-inapp">
+  <div class="wrap">
+    <div class="kk-logo">🚛</div>
+    <div class="kk-h1">나눔환경<br>스마트AI 안전출근부</div>
+    <div class="kk-h2">카카오톡 안에서는 저장이 안 됩니다<br>크롬(Chrome)으로 열어서 사용하세요!</div>
+    <div class="kk-card">
+      <div class="kk-card-t" id="kk-card-t">📋 크롬으로 여는 방법</div>
+      <div id="kk-steps"></div>
+    </div>
+    <button class="kk-main-btn" onclick="doOpenExternal()">🌐 크롬으로 열기</button>
+    <button class="kk-sub-btn" onclick="skipInapp()">그냥 계속 사용할게요</button>
+    <div class="kk-notice">💡 크롬으로 열면 홈화면에 앱으로 설치할 수 있습니다</div>
+  </div>
+</div>
+
+<!-- ══ 로그인 ══ -->
+
+<div id="screen-login">
+  <div class="lg-logo">🚛</div>
+  <div class="lg-brand">나눔환경<br>스마트AI 안전출근부</div>
+  <div class="lg-sub">성남시 생활폐기물 수집운반</div>
+  <button class="lg-adm-btn" onclick="openModal('modal-admin')">🔐 관리자 로그인</button>
+  <div class="lg-card">
+    <h3>👷 직원 로그인</h3>
+    <label class="lg-lbl">이름</label>
+    <input class="lg-inp" id="inp-name" type="text" placeholder="예) 홍길동" maxlength="10"
+      autocomplete="name" onkeydown="if(event.key==='Enter')document.getElementById('inp-phone').focus()">
+    <label class="lg-lbl">휴대폰 번호 (숫자만, - 없이)</label>
+    <input class="lg-inp" id="inp-phone" type="tel" inputmode="numeric" pattern="[0-9]*"
+      placeholder="예) 01012345678" maxlength="11" autocomplete="tel"
+      oninput="this.value=this.value.replace(/\D/g,'')"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="lg-err" id="login-err"></div>
+    <button class="lg-btn" onclick="doLogin()">로그인 →</button>
+    <div class="lg-hint">이름과 전화번호가 모두 맞아야 로그인됩니다<br>문의: 나눔환경 관리자</div>
+  </div>
+  <button class="lg-install-btn" onclick="showInstallGuide()">📲 홈화면 앱 설치 방법</button>
+</div>
+
+<!-- ══ 모달: 관리자 로그인 ══ -->
+
+<div class="modal-ov" id="modal-admin">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr modal-hdr-blue">
+      <div class="modal-hdr-t">🔐 관리자 로그인</div>
+      <div class="modal-hdr-s">전화번호와 비밀번호를 입력하세요</div>
+    </div>
+    <div class="modal-body">
+      <label class="modal-lbl">관리자 전화번호 (숫자만)</label>
+      <input class="modal-inp" id="adm-phone" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+      <label class="modal-lbl">비밀번호</label>
+      <input class="modal-inp" id="adm-pw" type="password" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doAdminLogin()">
+      <div class="modal-err" id="adm-err"></div>
+      <button class="modal-btn-blue" onclick="doAdminLogin()">관리자 로그인 →</button>
+      <button class="modal-btn2" onclick="closeModal('modal-admin')">취소</button>
+      <div style="font-size:12px;color:var(--text2);text-align:center;margin-top:10px;line-height:1.7">초기 번호: <b>01000000000</b> · 초기 비번: <b>1234</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 설치 안내 ══ -->
+
+<div class="modal-ov" id="modal-install">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr">
+      <div class="modal-hdr-t" id="inst-t">📲 홈화면에 앱 설치</div>
+      <div class="modal-hdr-s" id="inst-s">크롬에서 아래 순서대로 하세요</div>
+    </div>
+    <div class="modal-body">
+      <div id="inst-steps"></div>
+      <button class="modal-btn" onclick="closeModal('modal-install')">확인 ✓</button>
+      <button class="modal-btn2" onclick="closeModal('modal-install')">나중에</button>
+      <div class="modal-note" id="inst-note"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 모달: 공유/다운로드 ══ -->
+
+<div class="modal-ov" id="modal-share">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr" style="background:var(--grn);border-radius:24px 24px 0 0">
+      <div class="modal-hdr-t" style="color:#fff">📤 공유 / 다운로드</div>
+      <div class="modal-hdr-s" style="color:rgba(255,255,255,.8)">원하는 방식을 선택하세요</div>
+    </div>
+    <div class="modal-body" style="padding:16px 20px">
+      <div class="share-item" style="background:var(--grn-lt);border-color:var(--grn)" onclick="doFileDownload()">
+        <div class="share-icon" style="background:var(--grn)">⬇️</div>
+        <div><div class="share-label" style="color:var(--grn)">내 폰에 파일 저장</div><div class="share-desc">HTML 파일 다운로드 → 크롬으로 열기 → 앱 설치</div></div>
+      </div>
+      <div class="share-item" style="background:#FFFDE7;border-color:#F5C800" onclick="shareKakao()">
+        <div class="share-icon" style="background:#F5C800;color:#3A1D00">💬</div>
+        <div><div class="share-label" style="color:#3A1D00">카카오톡으로 공유</div><div class="share-desc">링크를 카카오톡으로 전송</div></div>
+      </div>
+      <div class="share-item" style="background:var(--blue-lt);border-color:var(--blue)" onclick="copyLink()">
+        <div class="share-icon" style="background:var(--blue)">🔗</div>
+        <div><div class="share-label" style="color:var(--blue)">링크 복사</div><div class="share-desc">주소를 클립보드에 복사 → 크롬에 붙여넣기</div></div>
+      </div>
+      <div class="share-item" style="background:var(--gray);border-color:var(--bdr)" onclick="nativeShare()">
+        <div class="share-icon" style="background:#555">📤</div>
+        <div><div class="share-label">기기 공유 메뉴</div><div class="share-desc">문자·메일·밴드 등 앱으로 공유</div></div>
+      </div>
+      <div class="share-item" style="background:#F3E5F5;border-color:#AB47BC" onclick="exportCSV()">
+        <div class="share-icon" style="background:#AB47BC">📊</div>
+        <div><div class="share-label" style="color:#6A1B9A">출근기록 CSV 저장</div><div class="share-desc">엑셀로 열 수 있는 출근기록 파일 다운로드</div></div>
+      </div>
+      <button class="modal-btn2" onclick="closeModal('modal-share')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 메인 앱 ══ -->
+
+<div id="app">
+
+  <!-- 출근 탭 -->
+
+  <div class="screen active" id="scr-home">
+    <div class="hdr">
+      <div class="hdr-row"><span class="hdr-t">🚛 나눔환경 스마트AI</span><span style="font-size:11px;color:var(--text2)" id="clock"></span></div>
+      <div class="hdr-s" id="hdr-sub">성남시 생활폐기물 수집운반</div>
+    </div>
+    <div class="p16">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div style="font-size:20px;font-weight:700" id="my-name">-</div><div style="font-size:13px;color:var(--text2);margin-top:2px" id="my-team">-</div></div>
+          <span class="badge b-org" id="my-badge">미출근</span>
+        </div>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px" id="my-time">오늘 출근 기록 없음</div>
+      </div>
+    </div>
+    <div class="gps-box" id="gps-box">
+      <div style="font-size:28px;margin-bottom:6px">📍</div>
+      <div class="gps-addr" id="gps-addr">위치 확인 중...</div>
+      <div class="gps-det" id="gps-detail">GPS 인증 대기</div>
+    </div>
+    <button class="act-btn ab-org" id="btn-ci" onclick="doCheckin()">📍 출근 체크하기</button>
+    <button class="act-btn ab-sec" id="btn-co" style="display:none" onclick="doCheckout()">🏠 퇴근 체크하기</button>
+    <div class="divider"></div>
+    <div style="margin:0 16px"><div class="sect-t">오늘 팀 현황</div></div>
+    <div class="stat-grid" id="home-stats"></div>
+    <div class="staff-wrap" id="home-roster"></div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- 안전 탭 -->
+
+  <div class="screen" id="scr-safety">
+    <div class="hdr">
+      <div class="hdr-row"><span class="hdr-t">✅ 안전 체크리스트</span><span style="font-size:14px;font-weight:700;color:var(--org)" id="ck-prog">0 / 0</span></div>
+      <div class="hdr-s">출발 전 반드시 확인하세요</div>
+      <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    </div>
+    <div class="p16">
+      <div id="checklist-items"></div>
+      <div style="font-size:14px;font-weight:700;margin:14px 0 8px">✍️ 확인 서명</div>
+      <div class="sig-box" id="sig" onclick="doSign()"><div class="sig-t">✅ 모든 항목 확인 후<br>여기를 탭하여 서명하세요</div></div>
+      <button class="act-btn ab-grn" id="sub-btn" style="display:none;margin:0 0 10px" onclick="submitSafety()">📤 안전점검 제출하기</button>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- 무사고 탭 -->
+
+  <div class="screen" id="scr-accident">
+    <div class="hdr"><div class="hdr-row"><span class="hdr-t">🏆 무사고 현황</span></div><div class="hdr-s">안전이 최우선입니다</div></div>
+    <div class="acc-big">
+      <div class="acc-num" id="acc-days">-</div>
+      <div style="font-size:15px;opacity:.9;margin-top:6px">연속 무사고 일수</div>
+      <div style="font-size:12px;opacity:.65;margin-top:4px" id="acc-since">2024년 4월 19일부터 현재까지</div>
+    </div>
+    <div class="stat-grid">
+      <div class="sbox"><div class="sl">올해 사고</div><div class="sv">0<span class="su"> 건</span></div></div>
+      <div class="sbox"><div class="sl">점검 준수율</div><div class="sv" id="acc-comp">-<span class="su"> %</span></div></div>
+      <div class="sbox"><div class="sl">이번 달 출근율</div><div class="sv" id="acc-rate">-<span class="su"> %</span></div></div>
+      <div class="sbox"><div class="sl">전체 직원</div><div class="sv" id="acc-total">-<span class="su"> 명</span></div></div>
+    </div>
+    <div class="goal-bar-wrap">
+      <div style="font-size:14px;font-weight:700;color:var(--grn)">🎯 목표: 365일 무사고</div>
+      <div class="goal-track"><div class="goal-fill" id="acc-bar" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--grn)" id="acc-bar-txt">계산 중...</div>
+    </div>
+    <div style="margin:0 16px"><div class="sect-t">팀별 현황</div></div>
+    <div class="staff-wrap" id="team-acc"></div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- AI 상담 탭 -->
+
+  <div class="screen" id="scr-ai">
+    <div class="hdr">
+      <div class="hdr-row"><span class="hdr-t">🤖 AI 노무·안전 상담</span></div>
+      <div class="hdr-s">야간수당·퇴직금·입찰 등 무엇이든 물어보세요</div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="quick-btns">
+      <button class="qb" onclick="quickAsk('야간수당 계산방법 알려줘')">야간수당 계산</button>
+      <button class="qb" onclick="quickAsk('퇴직금 계산방법 알려줘')">퇴직금 계산</button>
+      <button class="qb" onclick="quickAsk('특수건강검진 대상자와 주기 알려줘')">특수건강검진</button>
+      <button class="qb" onclick="quickAsk('2027년 입찰 준비사항 알려줘')">입찰 준비</button>
+      <button class="qb" onclick="quickAsk('연차휴가 계산방법 알려줘')">연차 계산</button>
+      <button class="qb" onclick="quickAsk('차량 변경허가 절차 알려줘')">차량 변경허가</button>
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-box" id="chat-box">
+        <div class="chat-msg chat-ai">안녕하세요! 나눔환경 AI 도우미입니다 👋<br>야간수당·퇴직금·안전규정·입찰 준비 등<br>무엇이든 질문해주세요!</div>
+      </div>
+      <div class="chat-inp-row">
+        <textarea class="chat-inp" id="chat-inp" rows="2" placeholder="질문을 입력하세요..." onkeydown="chatKeydown(event)"></textarea>
+        <button class="chat-send" id="chat-send" onclick="sendChat()">전송</button>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- 계산기 탭 -->
+
+  <div class="screen" id="scr-calc">
+    <div class="hdr">
+      <div class="hdr-row"><span class="hdr-t">🧮 수당·퇴직금 계산기</span></div>
+      <div class="hdr-s">근로기준법 기준 자동 계산</div>
+    </div>
+    <div class="calc-wrap" style="padding-top:14px">
+
+```
+  <!-- 야간수당 계산기 -->
+  <div class="calc-card">
+    <div class="calc-t">🌙 야간수당 계산기 <span style="font-size:11px;color:var(--text2);font-weight:400">(22:00~06:00, 통상임금×0.5)</span></div>
+    <div class="calc-row">
+      <div><div class="calc-lbl">시급 (원)</div><input class="calc-inp" id="c-hourly" type="number" placeholder="예) 15000" inputmode="numeric"></div>
+      <div><div class="calc-lbl">야간 근무시간</div><input class="calc-inp" id="c-nighours" type="number" placeholder="예) 3" inputmode="decimal" step="0.5"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">연장근무도 했나요?</div>
+    <div class="calc-row">
+      <div><div class="calc-lbl">연장시간 (야간포함)</div><input class="calc-inp" id="c-ot" type="number" placeholder="예) 2" inputmode="decimal" step="0.5"></div>
+      <div><div class="calc-lbl">휴일근무? (시간)</div><input class="calc-inp" id="c-holi" type="number" placeholder="0이면 비워두세요" inputmode="decimal" step="0.5"></div>
+    </div>
+    <button class="act-btn ab-org" style="margin:0;width:100%;border-radius:var(--rs);font-size:15px;padding:14px" onclick="calcNight()">계산하기</button>
+    <div class="calc-result" id="res-night">
+      <div class="calc-result-n" id="res-night-n">-</div>
+      <div class="calc-result-s" id="res-night-s"></div>
+    </div>
+  </div>
+
+  <!-- 퇴직금 계산기 -->
+  <div class="calc-card">
+    <div class="calc-t">💰 퇴직금 계산기 <span style="font-size:11px;color:var(--text2);font-weight:400">(근퇴법 §8)</span></div>
+    <div class="calc-row">
+      <div><div class="calc-lbl">최근 3개월 임금합계 (원)</div><input class="calc-inp" id="c-wage3m" type="number" placeholder="예) 9000000" inputmode="numeric"></div>
+      <div><div class="calc-lbl">최근 3개월 총 일수</div><input class="calc-inp" id="c-days3m" type="number" placeholder="예) 92" inputmode="numeric"></div>
+    </div>
+    <div><div class="calc-lbl">근속일수 (입사~퇴직)</div><input class="calc-inp" id="c-tenure" type="number" placeholder="예) 1095 (3년)" inputmode="numeric" style="margin-bottom:10px"></div>
+    <button class="act-btn ab-blue" style="margin:0;width:100%;border-radius:var(--rs);font-size:15px;padding:14px" onclick="calcRetire()">계산하기</button>
+    <div class="calc-result" id="res-retire" style="background:linear-gradient(135deg,var(--blue),#0D47A1)">
+      <div class="calc-result-n" id="res-retire-n">-</div>
+      <div class="calc-result-s" id="res-retire-s"></div>
+    </div>
+  </div>
+
+  <!-- 연차 계산기 -->
+  <div class="calc-card">
+    <div class="calc-t">📅 연차휴가 계산기 <span style="font-size:11px;color:var(--text2);font-weight:400">(근기법 §60)</span></div>
+    <div><div class="calc-lbl">근속연수 (년)</div><input class="calc-inp" id="c-years" type="number" placeholder="예) 3" inputmode="numeric" style="margin-bottom:10px"></div>
+    <button class="act-btn ab-grn" style="margin:0;width:100%;border-radius:var(--rs);font-size:15px;padding:14px" onclick="calcLeave()">계산하기</button>
+    <div class="calc-result" id="res-leave" style="background:linear-gradient(135deg,var(--grn),#1B5E20)">
+      <div class="calc-result-n" id="res-leave-n">-</div>
+      <div class="calc-result-s" id="res-leave-s"></div>
+    </div>
+  </div>
+</div>
+<div style="height:14px"></div>
+```
+
+  </div>
+
+  <!-- ══ 관리자 탭 (최적화 완전판) ══ -->
+
+  <div class="screen" id="scr-admin">
+
+```
+<!-- 헤더 -->
+<div class="hdr">
+  <div class="hdr-row">
+    <span class="hdr-t">⚙️ 관리자 대시보드</span>
+    <span class="adm-chip" id="adm-name-chip">관리자</span>
+  </div>
+  <div class="hdr-s" id="adm-sub">나눔환경 · 성남시 생활폐기물 수집운반</div>
+</div>
+
+<!-- ① 오늘 현황 요약 카드 4개 -->
+<div style="padding:14px 16px 0">
+  <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.06em;margin-bottom:8px">오늘 현황</div>
+</div>
+<div class="stat-grid" id="adm-stats"></div>
+
+<!-- 경고 배너 -->
+<div id="adm-alert" style="margin:0 16px 4px"></div>
+
+<!-- 공지사항 배너 (등록 시 표시) -->
+<div id="notice-display" style="display:none;margin:0 16px 10px;background:#FFF8E1;border:1.5px solid #FFB300;border-radius:var(--rs);padding:11px 14px">
+  <div style="font-size:11px;font-weight:700;color:#E65100;margin-bottom:3px">📢 현재 공지</div>
+  <div id="notice-text" style="font-size:13px;color:var(--text);line-height:1.6"></div>
+</div>
+
+<!-- 빠른 실행 버튼 -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 10px">
+  <button onclick="exportCSV()" style="padding:12px 8px;background:var(--grn);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;min-height:46px">📊 CSV 저장</button>
+  <button onclick="openModal('modal-share')" style="padding:12px 8px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;min-height:46px">📤 공유/설치</button>
+  <button onclick="resetAllAttendance()" style="padding:12px 8px;background:#fff;color:var(--org-dk);border:2px solid var(--org);border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;min-height:46px">🔄 출근 초기화</button>
+  <button onclick="admGoSection('sec-notice')" style="padding:12px 8px;background:#fff;color:var(--text);border:2px solid var(--bdr);border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;min-height:46px">📢 공지 등록</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ② 직원 출근 현황 -->
+<div style="padding:0 16px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="sect-t" style="margin-bottom:0">👥 직원 출근 현황</div>
+    <span style="font-size:11px;color:var(--text2)" id="roster-count"></span>
+  </div>
+  <input class="search-inp" id="adm-search" placeholder="🔍 이름 검색..." oninput="filterRoster()" style="margin-bottom:8px">
+</div>
+<div class="filt-row">
+  <button class="fb on" onclick="setFilt('all',this)">전체</button>
+  <button class="fb" onclick="setFilt('in',this)">✅ 출근</button>
+  <button class="fb" onclick="setFilt('out',this)">❌ 미출근</button>
+  <button class="fb" onclick="setFilt('late',this)">⚠️ 지각</button>
+  <button class="fb" onclick="setFilt('warn',this)">🔔 점검미완</button>
+</div>
+<div class="staff-wrap" id="adm-roster"></div>
+
+<div class="divider"></div>
+
+<!-- ③ 직원 등록·관리 -->
+<div id="sec-staff" style="padding:0 16px">
+  <div class="sect-t">➕ 직원 등록</div>
+  <div class="adm-form">
+    <div class="adm-grid">
+      <div>
+        <div class="adm-grid-lbl">이름</div>
+        <input class="adm-inp" id="new-name" placeholder="홍길동" maxlength="10" style="margin-bottom:0">
+      </div>
+      <div>
+        <div class="adm-grid-lbl">직책</div>
+        <select class="adm-sel" id="new-role" style="margin-bottom:0">
+          <option>기사</option><option>수거원</option><option>반장</option><option>사무</option>
+        </select>
+      </div>
+      <div>
+        <div class="adm-grid-lbl">팀</div>
+        <select class="adm-sel" id="new-team" style="margin-bottom:0">
+          <option>수거 1팀</option><option>수거 2팀</option><option>수거 3팀</option><option>수거 4팀</option>
+        </select>
+      </div>
+    </div>
+    <div class="adm-grid-lbl" style="margin-top:10px">휴대폰 번호 (숫자만, - 없이)</div>
+    <input class="adm-inp" id="new-phone" type="tel" inputmode="numeric" pattern="[0-9]*"
+      placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')" style="margin-bottom:8px">
+    <button class="act-btn ab-org" style="margin:0;width:100%;padding:13px;font-size:15px;border-radius:var(--rs)" onclick="addStaff()">직원 등록하기</button>
+    <div class="errt" id="staff-err"></div>
+  </div>
+</div>
+
+<!-- 직원 목록 -->
+<div style="padding:0 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+  <div style="font-size:13px;font-weight:700">등록 직원 <span id="staff-count" style="color:var(--org)">0</span>명</div>
+</div>
+<div class="staff-wrap" id="staff-list"></div>
+
+<div class="divider"></div>
+
+<!-- ④ 안전 체크리스트 관리 -->
+<div style="padding:0 16px;margin-bottom:8px">
+  <div class="sect-t">📋 안전 체크리스트 관리</div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">항목 추가·수정·삭제 후 <b style="color:var(--org)">💾 저장</b>하면 직원 탭에 즉시 반영됩니다.</div>
+</div>
+<div class="ck-add-box">
+  <div style="font-size:14px;font-weight:700;color:var(--org-dk);margin-bottom:10px">➕ 새 항목 추가</div>
+  <input class="ck-add-inp" id="new-ck-txt" type="text" placeholder="예) 안전모 착용 확인" onkeydown="if(event.key==='Enter')addCkItem()">
+  <select class="ck-add-sel" id="new-ck-cat">
+    <option>차량 안전</option><option>개인 보호</option><option>건강 상태</option>
+    <option>작업 준비</option><option>안전 장비</option><option>기타</option>
+  </select>
+  <button style="width:100%;padding:12px;background:var(--org);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer" onclick="addCkItem()">➕ 항목 추가</button>
+  <div class="errt" id="ck-err"></div>
+</div>
+<div style="margin:6px 16px;display:flex;justify-content:space-between;align-items:center">
+  <div style="font-size:13px;font-weight:700">등록 항목 <span id="ck-count" style="color:var(--org)">0</span>개</div>
+  <div style="font-size:11px;color:var(--text2)">추가·수정 후 반드시 저장</div>
+</div>
+<div class="ck-list-wrap" id="ck-edit-list"></div>
+<div style="padding:0 16px;margin-bottom:4px">
+  <button class="act-btn ab-grn" style="margin:0 0 8px;width:100%;padding:14px;font-size:15px;border-radius:var(--rs)" onclick="saveCklist()">💾 저장 — 직원에게 즉시 반영</button>
+  <button class="act-btn ab-sec" style="margin:0 0 10px;width:100%;padding:12px;font-size:13px;border-radius:var(--rs)" onclick="resetCklist()">↩️ 변경 취소</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- ⑤ 공지사항 등록 -->
+<div id="sec-notice" style="padding:0 16px">
+  <div class="sect-t">📢 전체 공지 등록</div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:8px">저장하면 앱 상단에 전체 공지로 표시됩니다.</div>
+  <textarea id="notice-inp" style="width:100%;padding:12px 14px;border:2px solid var(--bdr);border-radius:var(--rs);font-size:14px;resize:none;outline:none;height:90px;line-height:1.6;background:#fff" placeholder="예) 오늘 오전 강우 예보 — 빗길 서행 운전 당부"></textarea>
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button onclick="saveNotice()" style="flex:1;padding:12px;background:var(--org);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;min-height:44px">📢 공지 저장</button>
+    <button onclick="clearNotice()" style="padding:12px 14px;background:var(--gray);color:var(--text2);border:1px solid var(--bdr);border-radius:var(--rs);font-size:13px;cursor:pointer;min-height:44px">삭제</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ⑥ 관리자 계정 관리 -->
+<div style="padding:0 16px">
+  <div class="sect-t">🔐 관리자 계정 <span style="font-size:11px;font-weight:400;color:var(--text2)">(최대 2명)</span></div>
+</div>
+<div class="staff-wrap" id="admin-list" style="margin-bottom:10px"></div>
+<div id="admin-add-wrap" style="padding:0 16px">
+  <div class="adm-form">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--blue)">🔐 관리자 추가</div>
+    <div class="adm-grid-lbl">이름</div>
+    <input class="adm-inp" id="adm-new-name" placeholder="관리자 이름">
+    <div class="adm-grid-lbl">휴대폰 번호</div>
+    <input class="adm-inp" id="adm-new-phone" type="tel" inputmode="numeric" pattern="[0-9]*"
+      placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+    <div class="adm-grid-lbl">비밀번호 (4자리 이상)</div>
+    <input class="adm-inp" id="adm-new-pw" type="password" placeholder="비밀번호 설정" style="margin-bottom:8px">
+    <button class="act-btn ab-blue" style="margin:0;width:100%;padding:13px;font-size:14px;border-radius:var(--rs)" onclick="addAdmin()">관리자 추가하기</button>
+    <div class="errt" id="admin-err"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ⑦ 비밀번호 변경 -->
+<div style="padding:0 16px">
+  <div class="sect-t">🔑 내 비밀번호 변경</div>
+  <div class="adm-form">
+    <div class="adm-grid-lbl">현재 비밀번호</div>
+    <input class="adm-inp" id="pw-old" type="password" placeholder="현재 비밀번호">
+    <div class="adm-grid-lbl">새 비밀번호 (4자리 이상)</div>
+    <input class="adm-inp" id="pw-new" type="password" placeholder="새 비밀번호">
+    <div class="adm-grid-lbl">새 비밀번호 확인</div>
+    <input class="adm-inp" id="pw-new2" type="password" placeholder="다시 입력" style="margin-bottom:8px">
+    <button class="act-btn ab-sec" style="margin:0;width:100%;padding:12px;font-size:14px;border-radius:var(--rs)" onclick="changePw()">비밀번호 변경</button>
+    <div class="errt" id="pw-err"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ⑧ 위험 구역 -->
+<div style="padding:0 16px 16px">
+  <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">⚠️ 데이터 관리</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+    <button onclick="resetAllAttendance()" style="padding:11px 8px;background:var(--org-lt);color:var(--org-dk);border:1.5px solid var(--org);border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;min-height:42px">🔄 출퇴근 초기화<br><span style="font-size:10px;font-weight:400">(오늘 기록 리셋)</span></button>
+    <button onclick="clearAttendanceHistory()" style="padding:11px 8px;background:var(--red-lt);color:var(--red);border:1.5px solid var(--red);border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;min-height:42px">🗑️ 출근기록 삭제<br><span style="font-size:10px;font-weight:400">(전체 이력 삭제)</span></button>
+  </div>
+  <button onclick="logout()" style="width:100%;padding:13px;background:#fff;color:var(--text);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;min-height:48px">로그아웃</button>
+</div>
+```
+
+  </div>
+
+  <!-- 설명서 탭 -->
+
+  <div class="screen" id="scr-guide">
+    <div class="hdr"><div class="hdr-row"><span class="hdr-t">📖 사용 설명서</span></div><div class="hdr-s">나눔환경 스마트AI 안전출근부</div></div>
+    <div class="p16">
+      <div style="background:var(--org);border-radius:var(--r);padding:16px;color:#fff;margin-bottom:14px;text-align:center">
+        <div style="font-size:17px;font-weight:700;margin-bottom:4px">🚛 나눔환경 스마트AI 안전출근부</div>
+        <div style="font-size:12px;opacity:.85">출근 · 안전점검 · 무사고 · AI상담 통합 관리</div>
+      </div>
+      <button class="act-btn ab-grn" style="margin:0 0 10px;width:100%;padding:14px;font-size:15px;border-radius:var(--r)" onclick="openModal('modal-share')">📤 공유 / 다운로드</button>
+      <button class="act-btn ab-org" style="margin:0 0 14px;width:100%;padding:14px;font-size:15px;border-radius:var(--r)" onclick="showInstallGuide()">📲 홈화면 앱 설치 방법</button>
+      <div class="sect-t" style="margin-bottom:8px">📱 카카오/밴드에서 열 때</div>
+      <div style="background:var(--org-lt);border-radius:var(--r);padding:14px;border:1px solid var(--org);margin-bottom:14px">
+        <div style="font-size:14px;line-height:1.9">📱 <b>아이폰:</b> 우측 하단 <b>···</b> → <b>다른 브라우저로 열기</b> → 크롬<br>📱 <b>안드로이드:</b> 우측 상단 <b>⋮</b> → <b>다른 브라우저로 열기</b> → 크롬</div>
+      </div>
+      <div class="sect-t" style="margin-bottom:8px">📋 사용 순서</div>
+      <div style="background:#fff;border-radius:var(--r);padding:16px;border:1px solid var(--bdr);margin-bottom:12px">
+        <div style="font-size:14px;line-height:2.1">1️⃣ 이름 + 전화번호 입력 → 로그인<br>2️⃣ 출근 탭 → GPS 확인 → 출근 체크<br>3️⃣ 안전 탭 → 항목 체크 → 서명 → 제출<br>4️⃣ 퇴근 시 → 출근 탭 → 퇴근 체크<br>5️⃣ 🤖AI탭 → 노무·안전 질문하기<br>6️⃣ 🧮계산기탭 → 수당·퇴직금 계산</div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- 탭바 -->
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>출근</button>
+    <button class="tab" onclick="go('safety')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>안전</button>
+    <button class="tab" onclick="go('accident')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2"/></svg>무사고</button>
+    <button class="tab" onclick="go('ai')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg>AI상담</button>
+    <button class="tab" onclick="go('calc')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>계산기</button>
+    <button class="tab" id="tab-admin" style="display:none" onclick="go('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>관리자</button>
+    <button class="tab" onclick="go('guide')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>설명서</button>
+  </div>
+</div>
+
+<!-- FAB -->
+
+<div id="fab-wrap">
+  <button class="fab" style="background:var(--grn)" onclick="openModal('modal-share')" title="공유/다운로드">⬇️</button>
+  <button class="fab" style="background:var(--org)" onclick="showInstallGuide()" title="앱 설치">📲</button>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   나눔환경 스마트AI 안전출근부 — 오류수정 완전판
+   수정: CSS 변수 전체 교정, ab-blue 추가,
+         AI상담(Anthropic API), 계산기 3종,
+         CSV 내보내기, 출근기록 영구저장
+══════════════════════════════════════════ */
+
+// ── PWA Manifest ──
+(function(){
+  try{
+    var m={name:'나눔환경 스마트AI 안전출근부',short_name:'나눔환경 스마트AI',
+      start_url:location.href,display:'standalone',
+      background_color:'#E8520A',theme_color:'#E8520A',
+      icons:[
+        {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23E8520A'/%3E%3Ctext y='140' x='96' font-size='110' text-anchor='middle'%3E%F0%9F%9A%9B%3C/text%3E%3C/svg%3E",sizes:'192x192',type:'image/svg+xml'},
+        {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23E8520A'/%3E%3Ctext y='370' x='256' font-size='300' text-anchor='middle'%3E%F0%9F%9A%9B%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
+      ]};
+    var b=new Blob([JSON.stringify(m)],{type:'application/json'});
+    document.getElementById('pwa-manifest').href=URL.createObjectURL(b);
+  }catch(e){}
+})();
+
+// ── 저장소 (localStorage + sessionStorage + 메모리) ──
+var MEM={};
+var PFX='ne3_';
+function save(k,v){var s=JSON.stringify(v);MEM[PFX+k]=s;try{localStorage.setItem(PFX+k,s);}catch(e){}try{sessionStorage.setItem(PFX+k,s);}catch(e2){}}
+function load(k,def){var key=PFX+k;if(MEM[key]!==undefined){try{return JSON.parse(MEM[key]);}catch(e){}}try{var v=localStorage.getItem(key);if(v!=null){MEM[key]=v;return JSON.parse(v);}}catch(e){}try{var v2=sessionStorage.getItem(key);if(v2!=null){MEM[key]=v2;return JSON.parse(v2);}}catch(e2){}return def;}
+
+// ── UA 감지 ──
+var UA=navigator.userAgent||'';
+var IS_IOS=/iPad|iPhone|iPod/.test(UA)&&!window.MSStream;
+var IS_AND=/Android/i.test(UA);
+var IS_KAKAO=/KAKAOTALK|kakaotalk/i.test(UA);
+var IS_BAND=/NBand|NaverBand|naver.*band/i.test(UA);
+var IS_NAVER=/NAVER\(inapp/i.test(UA);
+var IS_LINE=/Line\//i.test(UA);
+var IS_FB=/FBAN|FBAV|FB_IAB|Instagram/i.test(UA);
+var IS_IOS_INAPP=IS_IOS&&/AppleWebKit/.test(UA)&&!/Safari\//.test(UA)&&!window.navigator.standalone;
+var IS_INAPP=IS_KAKAO||IS_BAND||IS_NAVER||IS_LINE||IS_FB||IS_IOS_INAPP;
+var IS_CHROME=/Chrome\//.test(UA)&&!/Chromium|Edge|OPR|Samsung/.test(UA);
+var IS_STANDALONE=window.navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode:standalone)').matches);
+
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();deferredPrompt=e;
+  if(!IS_INAPP&&!IS_STANDALONE&&IS_CHROME){
+    setTimeout(function(){if(deferredPrompt&&!load('inst-done',false)){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted'){save('inst-done',true);toast('✅ 홈화면에 앱이 설치됐습니다!');}deferredPrompt=null;});}},2000);
+  }
+});
+
+// ── 인앱 감지 ──
+function showInappLayer(){
+  var el=document.getElementById('screen-inapp');
+  var lg=document.getElementById('screen-login');
+  if(!el||!lg){setTimeout(showInappLayer,10);return;}
+  if(IS_INAPP){
+    el.setAttribute('style','display:block!important;position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;z-index:2147483647!important;background:#FAE100!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;visibility:visible!important;opacity:1!important;');
+    lg.setAttribute('style','display:none!important');
+    buildInappGuide();
+  }else{
+    el.setAttribute('style','display:none!important');
+    lg.className='show';
+    if(!IS_STANDALONE&&!IS_CHROME&&!load('chrome-shown',false)){setTimeout(function(){showChromeGuide();save('chrome-shown',true);},1500);}
+  }
+}
+showInappLayer();
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',showInappLayer);}
+
+function buildInappGuide(){
+  var t=document.getElementById('kk-card-t');var s=document.getElementById('kk-steps');if(!t||!s)return;
+  if(IS_IOS){
+    t.innerHTML='🍎 아이폰 → 크롬(Chrome)으로 열기';
+    s.innerHTML='<div class="kk-step"><div class="kk-step-n">1</div><div class="kk-step-t">화면 오른쪽 하단 <b>[···]</b> 버튼 탭</div></div><div class="kk-step"><div class="kk-step-n">2</div><div class="kk-step-t"><b>[다른 브라우저로 열기]</b> → <b>Chrome</b> 선택</div></div><div class="kk-step"><div class="kk-step-n">3</div><div class="kk-step-t">크롬 주소창 우측 <b>[⋮]</b> → <b>[홈 화면에 추가]</b></div></div><div class="kk-step"><div class="kk-step-n">✅</div><div class="kk-step-t"><b>홈화면 🚛 앱으로 바로 실행!</b></div></div>';
+  }else{
+    t.innerHTML='🤖 안드로이드 → 크롬(Chrome)으로 열기';
+    s.innerHTML='<div class="kk-step"><div class="kk-step-n">1</div><div class="kk-step-t">화면 오른쪽 상단 <b>[⋮]</b> 탭</div></div><div class="kk-step"><div class="kk-step-n">2</div><div class="kk-step-t"><b>[다른 브라우저로 열기]</b> → <b>Chrome</b> 선택</div></div><div class="kk-step"><div class="kk-step-n">3</div><div class="kk-step-t">크롬 주소창 우측 <b>[⋮]</b> → <b>[앱 설치]</b> 또는 <b>[홈 화면에 추가]</b></div></div><div class="kk-step"><div class="kk-step-n">✅</div><div class="kk-step-t"><b>홈화면 🚛 앱으로 바로 실행!</b></div></div>';
+  }
+}
+function skipInapp(){document.getElementById('screen-inapp').setAttribute('style','display:none!important');document.getElementById('screen-login').className='show';}
+
+// ── 크롬으로 열기 ──
+function doOpenExternal(){
+  var url=location.href;
+  if(IS_AND){
+    window.location.href='intent://'+url.replace(/^https?:\/\//,'')+
+      '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(url)+';end';
+    setTimeout(function(){window.open(url,'_blank');},1000);
+  }else if(IS_IOS){
+    window.location.href=url.replace(/^https?/,function(m){return m==='https'?'googlechromes':'googlechrome';});
+    setTimeout(function(){window.location.href='x-safari-'+url;},600);
+    setTimeout(function(){try{navigator.clipboard.writeText(url).then(function(){alert('📋 주소가 복사됐습니다!\n\nChrome 앱을 열고 주소창에 붙여넣기 해주세요.');}).catch(function(){prompt('Chrome에서 열어주세요:',url);});}catch(e){prompt('Chrome에서 열어주세요:',url);}},1400);
+  }else{window.open(url,'_blank');}
+}
+
+function showChromeGuide(){
+  var t=document.getElementById('inst-t');var s=document.getElementById('inst-s');var st=document.getElementById('inst-steps');var n=document.getElementById('inst-note');if(!t)return;
+  t.textContent='🌐 크롬(Chrome)으로 열기';s.textContent='크롬으로 열면 앱으로 자동 설치됩니다';
+  st.innerHTML='<div class="modal-step"><div class="modal-n">1</div><div class="modal-t">아래 링크 복사 후 <b>Chrome 앱</b>에서 열기</div></div><div class="modal-step"><div class="modal-n">2</div><div class="modal-t">크롬 주소창 우측 <b>[⋮]</b> → <b>[앱 설치]</b> 또는 <b>[홈 화면에 추가]</b></div></div><div class="modal-step"><div class="modal-n">✅</div><div class="modal-t"><b>홈화면 🚛 앱으로 바로 실행!</b></div></div>';
+  n.textContent='Chrome이 없으면 앱스토어/플레이스토어에서 설치하세요';
+  openModal('modal-install');
+}
+
+function showInstallGuide(){
+  if(IS_STANDALONE){toast('✅ 이미 앱으로 실행 중입니다');return;}
+  if(IS_CHROME&&IS_AND&&deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(r){if(r.outcome==='accepted'){save('inst-done',true);toast('✅ 홈화면에 설치됐습니다!');}else showInstallModal();deferredPrompt=null;});return;}
+  showInstallModal();
+}
+function showInstallModal(){
+  var t=document.getElementById('inst-t');var s=document.getElementById('inst-s');var st=document.getElementById('inst-steps');var n=document.getElementById('inst-note');if(!t)return;
+  if(IS_IOS){t.textContent='📲 아이폰 크롬 홈화면 추가';s.textContent='Chrome 브라우저에서 하세요';st.innerHTML='<div class="modal-step"><div class="modal-n">1</div><div class="modal-t">크롬 주소창 우측 <b>[⋮]</b> 탭</div></div><div class="modal-step"><div class="modal-n">2</div><div class="modal-t"><b>[홈 화면에 추가]</b> 탭</div></div><div class="modal-step"><div class="modal-n">3</div><div class="modal-t"><b>[추가]</b> 탭</div></div><div class="modal-step"><div class="modal-n">✅</div><div class="modal-t">홈화면 🚛 앱 아이콘 생성!</div></div>';n.innerHTML='Safari: 하단 <b>공유(□↑)</b> → <b>[홈 화면에 추가]</b>';}
+  else{t.textContent='📲 안드로이드 크롬 앱 설치';s.textContent='Chrome 브라우저에서 하세요';st.innerHTML='<div class="modal-step"><div class="modal-n">1</div><div class="modal-t">크롬 주소창 우측 <b>[⋮]</b> 탭</div></div><div class="modal-step"><div class="modal-n">2</div><div class="modal-t"><b>[앱 설치]</b> 또는 <b>[홈 화면에 추가]</b> 탭</div></div><div class="modal-step"><div class="modal-n">3</div><div class="modal-t"><b>[설치]</b> 또는 <b>[추가]</b> 탭</div></div><div class="modal-step"><div class="modal-n">✅</div><div class="modal-t">홈화면 🚛 앱 아이콘 생성!</div></div>';n.textContent='크롬이 없으면 Play스토어에서 Chrome 설치 후 다시 열어주세요';}
+  openModal('modal-install');
+}
+
+// ── 공유/다운로드 ──
+function doFileDownload(){
+  closeModal('modal-share');
+  try{
+    var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download='나눔환경_스마트AI_안전출근부.html';a.style.display='none';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},5000);
+    toast('⬇️ 다운로드 완료! 크롬으로 열어주세요');
+    setTimeout(showInstallGuide,2500);
+  }catch(e){copyLink();}
+}
+function shareKakao(){
+  closeModal('modal-share');var url=location.href;
+  if(navigator.share){navigator.share({title:'나눔환경 스마트AI 안전출근부',text:'성남시 생활폐기물 수집운반 안전출근부',url:url}).then(function(){toast('✅ 공유 완료!');}).catch(function(e){if(e&&e.name!=='AbortError')copyLinkSilent(url);});return;}
+  copyLinkSilent(url);
+}
+function copyLink(){closeModal('modal-share');copyLinkSilent(location.href);}
+function copyLinkSilent(url){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){toast('🔗 링크 복사 완료!');}).catch(function(){fallbackCopy(url);});}
+  else{fallbackCopy(url);}
+}
+function fallbackCopy(url){var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');toast('🔗 링크 복사 완료!');}catch(e){prompt('아래 주소를 크롬에서 열어주세요:',url);}document.body.removeChild(ta);}
+function nativeShare(){closeModal('modal-share');if(!navigator.share){toast('이 브라우저는 공유를 지원하지 않습니다');copyLinkSilent(location.href);return;}navigator.share({title:'나눔환경 스마트AI 안전출근부',text:'성남시 생활폐기물 수집운반 안전출근부 앱',url:location.href}).then(function(){toast('✅ 공유 완료!');}).catch(function(e){if(e&&e.name!=='AbortError')copyLinkSilent(location.href);});}
+
+// ── CSV 출근기록 내보내기 ──
+function exportCSV(){
+  closeModal('modal-share');
+  var recs=load('attendance',[]);
+  if(!recs||!recs.length){toast('⚠️ 저장된 출근기록이 없습니다');return;}
+  var BOM='\uFEFF';
+  var hdr='날짜,시간,이름,직책,팀,GPS,안전점검,비고\n';
+  var rows=recs.map(function(r){
+    return [r.date,r.time,r.name,r.role,r.team,r.gps?'O':'X',r.safe?'완료':'미완',''].join(',');
+  }).join('\n');
+  var blob=new Blob([BOM+hdr+rows],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='나눔환경_출근기록_'+getToday()+'.csv';a.style.display='none';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},5000);
+  toast('📊 출근기록 CSV 저장 완료!');
+}
+
+// ── 모달 ──
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+// ── 관리자 모달 로그인 ──
+function doAdminLogin(){
+  var phone=document.getElementById('adm-phone').value.replace(/\D/g,'');
+  var pw=document.getElementById('adm-pw').value;
+  if(phone.length<10){setErr('adm-err','전화번호를 입력하세요');return;}
+  var admins=load('admins',[]);
+  var a=null;for(var i=0;i<admins.length;i++)if(admins[i].phone===phone){a=admins[i];break;}
+  if(!a){setErr('adm-err','등록되지 않은 관리자 번호입니다');return;}
+  if(a.pw!==pw){setErr('adm-err','비밀번호가 올바르지 않습니다');return;}
+  CU={name:a.name,role:'관리자',phone:phone,isAdmin:true};
+  closeModal('modal-admin');
+  document.getElementById('screen-login').className='';
+  bootApp();
+}
+
+// ── 초기 데이터 ──
+function initData(){
+  if(!load('init',false)){
+    save('admins',[{name:'대표자',phone:'01000000000',pw:'1234'}]);
+    save('staff',[
+      {id:1,name:'김철수',role:'기사',team:'수거 1팀',phone:'01011110001',status:'out',time:'',gps:false,safe:false},
+      {id:2,name:'박영호',role:'기사',team:'수거 2팀',phone:'01011110002',status:'out',time:'',gps:false,safe:false},
+      {id:3,name:'최수정',role:'수거원',team:'수거 3팀',phone:'01011110003',status:'out',time:'',gps:false,safe:false},
+      {id:4,name:'이민준',role:'수거원',team:'수거 1팀',phone:'01011110004',status:'out',time:'',gps:false,safe:false},
+      {id:5,name:'장현우',role:'기사',team:'수거 2팀',phone:'01011110005',status:'out',time:'',gps:false,safe:false},
+    ]);
+    save('cklist',[
+      {id:1,txt:'타이어 공기압·마모 상태 확인',cat:'차량 안전'},
+      {id:2,txt:'브레이크·등화장치 작동 확인',cat:'차량 안전'},
+      {id:3,txt:'적재함 도어 잠금·압축기 작동 확인',cat:'차량 안전'},
+      {id:4,txt:'안전조끼 착용 (야간 반사띠 포함)',cat:'개인 보호'},
+      {id:5,txt:'안전화·안전장갑 착용 확인',cat:'개인 보호'},
+      {id:6,txt:'음주·약물 복용 없음 자가 확인',cat:'건강 상태'},
+      {id:7,txt:'오늘 수거 노선·구역 확인 완료',cat:'작업 준비'},
+      {id:8,txt:'비상연락처·응급처치 키트 확인',cat:'안전 장비'},
+    ]);
+    save('attendance',[]);
+    save('init',true);
+  }
+}
+initData();
+
+var editCklist=[],CU=null,ckDone=0,signed=false,curFilt='all';
+var CATS=['차량 안전','개인 보호','건강 상태','작업 준비','안전 장비','기타'];
+var CI={'차량 안전':'🚛','개인 보호':'🦺','건강 상태':'💪','작업 준비':'📋','안전 장비':'🧰','기타':'📌'};
+var chatHistory=[];
+
+if(IS_STANDALONE){var fab=document.getElementById('fab-wrap');if(fab)fab.style.display='none';}
+
+// ── 유틸 ──
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='show';setTimeout(function(){t.className='';},2800);}
+function setErr(id,msg){var el=document.getElementById(id);if(!el)return;el.textContent=msg;setTimeout(function(){if(el)el.textContent='';},3500);}
+function getToday(){var n=new Date();var p=function(x){return('0'+x).slice(-2);};return n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());}
+function getNow(){var n=new Date();var p=function(x){return('0'+x).slice(-2);};return p(n.getHours())+':'+p(n.getMinutes());}
+function updateClock(){
+  var n=new Date();var p=function(x){return('0'+x).slice(-2);};
+  var s=n.getFullYear()+'.'+p(n.getMonth()+1)+'.'+p(n.getDate())+' '+p(n.getHours())+':'+p(n.getMinutes());
+  var c=document.getElementById('clock');if(c)c.textContent=s;
+  var d=document.getElementById('adm-sub');if(d)d.textContent=s;
+}
+function fmt(n){return n.toLocaleString('ko-KR')+'원';}
+
+// ── 로그인 ──
+function doLogin(){
+  var name=document.getElementById('inp-name').value.replace(/\s/g,'');
+  var phone=document.getElementById('inp-phone').value.replace(/\D/g,'');
+  if(!name){setErr('login-err','이름을 입력하세요');return;}
+  if(phone.length<9){setErr('login-err','전화번호를 입력하세요 (숫자만)');return;}
+  var staff=load('staff',[]);var match=null;
+  for(var i=0;i<staff.length;i++){if((staff[i].name||'').replace(/\s/g,'')===name&&(staff[i].phone||'').replace(/\D/g,'')===phone){match=staff[i];break;}}
+  if(!match){
+    var nameOnly=false;for(var i=0;i<staff.length;i++)if((staff[i].name||'').replace(/\s/g,'')===name){nameOnly=true;break;}
+    setErr('login-err',nameOnly?'⚠️ 전화번호가 다릅니다. 관리자에게 확인하세요.':'❌ 등록되지 않은 이름입니다. 관리자에게 문의하세요.');return;
+  }
+  CU={name:match.name,role:match.role,phone:match.phone,isAdmin:false,sid:match.id,team:match.team};
+  document.getElementById('screen-login').className='';
+  bootApp();
+}
+
+// ── BOOT ──
+function bootApp(){
+  document.getElementById('app').style.display='block';
+  document.getElementById('my-name').textContent=CU.name+' '+CU.role;
+  document.getElementById('my-team').textContent=CU.team||(CU.isAdmin?'관리자':'나눔환경');
+  document.getElementById('hdr-sub').textContent=CU.isAdmin?'관리자 모드 · 나눔환경 스마트AI':'성남시 생활폐기물 수집운반';
+  if(CU.isAdmin)document.getElementById('tab-admin').style.display='flex';
+  updateClock();setInterval(updateClock,30000);
+  initGPS();renderHomeStats();renderHomeRoster();renderChecklist();
+  if(CU.isAdmin){renderAdminStats();filterRoster();renderStaffList();renderAdminList();renderCkEditList();loadNoticeDisplay();}
+  updateAccStats();
+}
+
+// ── 탭 ──
+function go(s){
+  var ss=document.querySelectorAll('.screen');for(var i=0;i<ss.length;i++)ss[i].classList.remove('active');
+  var ts=document.querySelectorAll('.tab');for(var i=0;i<ts.length;i++)ts[i].classList.remove('active');
+  var scrEl=document.getElementById('scr-'+s);if(scrEl)scrEl.classList.add('active');
+  window.scrollTo(0,0);
+  // 탭 하이라이트
+  var tabMap=['home','safety','accident','ai','calc','admin','guide'];
+  var tabIdx=tabMap.indexOf(s);if(tabIdx>=0&&ts[tabIdx])ts[tabIdx].classList.add('active');
+  if(s==='admin'){renderAdminStats();filterRoster();renderStaffList();renderAdminList();renderCkEditList();loadNoticeDisplay();}
+}
+
+// ── GPS ──
+function initGPS(){
+  var box=document.getElementById('gps-box'),addr=document.getElementById('gps-addr'),det=document.getElementById('gps-detail');
+  if(!navigator.geolocation){addr.textContent='성남시 중원구 사기막골로';det.textContent='GPS 미지원 — 시뮬레이션 모드';box.classList.add('ok');return;}
+  addr.textContent='위치 확인 중...';
+  navigator.geolocation.getCurrentPosition(
+    function(pos){addr.textContent='성남시 중원구 · GPS 인증 완료';det.textContent='위도 '+pos.coords.latitude.toFixed(4)+' · 정확도 '+Math.round(pos.coords.accuracy)+'m';box.classList.add('ok');},
+    function(err){addr.textContent='성남시 중원구 사기막골로';det.textContent=err.code===1?'위치 권한 거부됨 (설정 권장)':'GPS 시뮬레이션 모드';box.classList.add('ok');},
+    {timeout:10000,enableHighAccuracy:true,maximumAge:60000}
+  );
+}
+
+// ── 출근/퇴근 + 영구기록 저장 ──
+function doCheckin(){
+  var now=getToday();var t=getNow();
+  document.getElementById('my-badge').textContent='출근완료';document.getElementById('my-badge').className='badge b-in';
+  document.getElementById('my-time').textContent=t+' GPS 위치 인증 · 출근 처리됨';
+  document.getElementById('btn-ci').style.display='none';document.getElementById('btn-co').style.display='block';
+  if(CU&&CU.sid){
+    var st=load('staff',[]);for(var i=0;i<st.length;i++)if(st[i].id===CU.sid){st[i].status='in';st[i].time=t;st[i].gps=true;break;}
+    save('staff',st);
+    // 출근 기록 영구 저장
+    var recs=load('attendance',[]);
+    recs.push({date:now,time:t,name:CU.name,role:CU.role,team:CU.team||'',gps:true,safe:false});
+    save('attendance',recs);
+  }
+  renderHomeStats();renderHomeRoster();
+  toast('✅ 출근 완료! '+t+' GPS 기록됨');
+}
+function doCheckout(){
+  var t=getNow();
+  document.getElementById('my-badge').textContent='퇴근';document.getElementById('my-badge').className='badge b-out';
+  document.getElementById('my-time').textContent=t+' 퇴근 완료 · 수고하셨습니다';
+  var btn=document.getElementById('btn-co');btn.textContent='🏠 퇴근 완료';btn.disabled=true;
+  toast('🏠 퇴근 완료! 수고하셨습니다');
+}
+
+// ── 안전 체크리스트 ──
+function renderChecklist(){
+  var items=load('cklist',[]);var total=items.length;
+  ckDone=0;signed=false;
+  document.getElementById('ck-prog').textContent='0 / '+total;
+  document.getElementById('prog').style.width='0%';
+  var sig=document.getElementById('sig');sig.className='sig-box';
+  sig.innerHTML='<div class="sig-t">✅ 모든 항목 확인 후<br>여기를 탭하여 서명하세요</div>';
+  var sb=document.getElementById('sub-btn');sb.style.display='none';sb.disabled=false;sb.textContent='📤 안전점검 제출하기';
+  var cats={};for(var i=0;i<items.length;i++){if(!cats[items[i].cat])cats[items[i].cat]=[];cats[items[i].cat].push(items[i]);}
+  var html='';
+  for(var c=0;c<CATS.length;c++){
+    var cat=CATS[c];if(!cats[cat]||!cats[cat].length)continue;
+    html+='<div style="font-size:13px;font-weight:700;color:var(--text2);margin:12px 0 6px;display:flex;align-items:center;gap:6px">'+(CI[cat]||'📌')+' '+cat+'</div>';
+    for(var j=0;j<cats[cat].length;j++){var it=cats[cat][j];html+='<div class="ck-item" onclick="ckTap(this)"><div class="ck-circle">✓</div><div class="ck-tw"><div class="ck-t">'+it.txt+'</div><div class="ck-c">'+it.cat+'</div></div></div>';}
+  }
+  document.getElementById('checklist-items').innerHTML=html;
+}
+function ckTap(el){
+  var total=load('cklist',[]).length;var was=el.classList.contains('done');
+  el.classList.toggle('done');ckDone+=was?-1:1;
+  document.getElementById('ck-prog').textContent=ckDone+' / '+total;
+  document.getElementById('prog').style.width=Math.round(ckDone/total*100)+'%';
+  if(ckDone===total)toast('🎉 전 항목 확인 완료! 서명해주세요');
+}
+function doSign(){
+  if(ckDone<load('cklist',[]).length){toast('⚠️ 모든 항목을 먼저 확인하세요');return;}
+  signed=true;var t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  var sig=document.getElementById('sig');sig.className='sig-box ok';
+  sig.innerHTML='<div class="sig-t">✅ 서명 완료 · '+t+'</div>';
+  document.getElementById('sub-btn').style.display='block';
+}
+function submitSafety(){
+  if(!signed){toast('서명 후 제출 가능합니다');return;}
+  var btn=document.getElementById('sub-btn');btn.textContent='✅ 제출 완료 · 관리자 전송됨';btn.disabled=true;
+  if(CU&&CU.sid){
+    var st=load('staff',[]);for(var i=0;i<st.length;i++)if(st[i].id===CU.sid){st[i].safe=true;break;}save('staff',st);
+    // 출근기록에도 safe 업데이트
+    var recs=load('attendance',[]);var today=getToday();
+    for(var i=recs.length-1;i>=0;i--){if(recs[i].date===today&&recs[i].name===CU.name){recs[i].safe=true;break;}}
+    save('attendance',recs);
+  }
+  toast('📤 안전점검 제출 완료!');
+}
+
+// ── 체크리스트 편집 ──
+function renderCkEditList(){editCklist=JSON.parse(JSON.stringify(load('cklist',[])));drawCkEditList();}
+function drawCkEditList(){
+  var el=document.getElementById('ck-edit-list');var cnt=document.getElementById('ck-count');if(cnt)cnt.textContent=editCklist.length;
+  if(!editCklist.length){el.innerHTML='<div style="text-align:center;padding:24px;font-size:14px;color:var(--text2);background:#fff;border-radius:var(--r);border:2px dashed var(--bdr);margin-bottom:12px">아직 등록된 항목이 없습니다<br>위에서 추가하세요</div>';return;}
+  var groups={};for(var c=0;c<CATS.length;c++)groups[CATS[c]]=[];
+  for(var i=0;i<editCklist.length;i++){if(!groups[editCklist[i].cat])groups[editCklist[i].cat]=[];groups[editCklist[i].cat].push(editCklist[i]);}
+  var html='';
+  for(var c=0;c<CATS.length;c++){
+    var cat=CATS[c];if(!groups[cat]||!groups[cat].length)continue;
+    html+='<div class="ck-list-cat">'+(CI[cat]||'📌')+' '+cat+'</div>';
+    for(var j=0;j<groups[cat].length;j++){
+      var it=groups[cat][j];
+      html+='<div class="ck-edit-row"><div class="ck-edit-view" id="ckview-'+it.id+'"><div class="ck-edit-dot"></div><div class="ck-edit-txt">'+it.txt+'</div><div class="ck-edit-btns"><button class="ck-ebtn ck-ebtn-e" onclick="ckEditMode('+it.id+')">✏️ 수정</button><button class="ck-ebtn ck-ebtn-d" onclick="delCkItem('+it.id+')">🗑️ 삭제</button></div></div>'
+        +'<div class="ck-editform" id="ckedit-'+it.id+'"><input class="ck-editform-inp" id="cket-'+it.id+'" value="'+it.txt.replace(/"/g,'&quot;')+'"><select class="ck-editform-sel" id="ckec-'+it.id+'">'+CATS.map(function(ca){return '<option'+(ca===it.cat?' selected':'')+'>'+ca+'</option>';}).join('')+'</select><div class="ck-editform-btns"><button class="ck-ef-save" onclick="saveCkEdit('+it.id+')">✅ 저장</button><button class="ck-ef-cancel" onclick="ckViewMode('+it.id+')">취소</button></div></div></div>';
+    }
+  }
+  el.innerHTML=html;
+}
+function ckEditMode(id){
+  for(var i=0;i<editCklist.length;i++){var v=document.getElementById('ckview-'+editCklist[i].id);var e=document.getElementById('ckedit-'+editCklist[i].id);if(v)v.style.display='flex';if(e)e.style.display='none';}
+  var v=document.getElementById('ckview-'+id);var e=document.getElementById('ckedit-'+id);
+  if(v)v.style.display='none';if(e)e.style.display='block';
+  setTimeout(function(){var inp=document.getElementById('cket-'+id);if(inp){inp.focus();inp.select();}},100);
+}
+function ckViewMode(id){var v=document.getElementById('ckview-'+id);var e=document.getElementById('ckedit-'+id);if(v)v.style.display='flex';if(e)e.style.display='none';}
+function saveCkEdit(id){
+  var inp=document.getElementById('cket-'+id);var sel=document.getElementById('ckec-'+id);if(!inp||!sel)return;
+  var txt=inp.value.trim();if(!txt){inp.style.borderColor='var(--red)';inp.focus();return;}
+  for(var i=0;i<editCklist.length;i++)if(editCklist[i].id===id){editCklist[i].txt=txt;editCklist[i].cat=sel.value;break;}
+  drawCkEditList();toast('✏️ 수정됐습니다 · 저장 버튼을 눌러주세요');
+}
+function delCkItem(id){
+  if(editCklist.length<=1){toast('⚠️ 최소 1개 항목은 있어야 합니다');return;}
+  var item=null;for(var i=0;i<editCklist.length;i++)if(editCklist[i].id===id){item=editCklist[i];break;}
+  if(!confirm((item?'"'+item.txt.substring(0,15)+'..." ':'')+'항목을 삭제하시겠습니까?'))return;
+  var r=[];for(var i=0;i<editCklist.length;i++)if(editCklist[i].id!==id)r.push(editCklist[i]);
+  editCklist=r;drawCkEditList();toast('🗑️ 삭제됐습니다 · 저장 버튼을 눌러주세요');
+}
+function addCkItem(){
+  var inp=document.getElementById('new-ck-txt');var sel=document.getElementById('new-ck-cat');
+  var txt=inp.value.trim();if(!txt){setErr('ck-err','항목 내용을 입력하세요');inp.focus();return;}
+  editCklist.push({id:Date.now(),txt:txt,cat:sel.value});inp.value='';inp.focus();
+  drawCkEditList();toast('✅ 항목이 추가됐습니다');
+}
+function saveCklist(){if(!editCklist.length){toast('항목이 없습니다');return;}save('cklist',editCklist);renderChecklist();drawCkEditList();toast('💾 저장 완료! 직원 안전 탭에 반영됐습니다');}
+function resetCklist(){if(!confirm('변경사항을 취소하고 마지막 저장 상태로 되돌릴까요?'))return;renderCkEditList();toast('↩️ 되돌렸습니다');}
+
+// ══════════════════════════════════════════
+// 관리자 모드 — 최적화 완전판
+// ══════════════════════════════════════════
+
+// ── 홈 현황 ──
+function renderHomeStats(){
+  var st=load('staff',[]);var inC=0,outC=0;
+  for(var i=0;i<st.length;i++){if(st[i].status==='in'||st[i].status==='late')inC++;else outC++;}
+  document.getElementById('home-stats').innerHTML=
+    '<div class="sbox"><div class="sl">✅ 출근 완료</div><div class="sv" style="color:var(--grn)">'+inC+'<span class="su"> 명</span></div></div>'+
+    '<div class="sbox"><div class="sl">❌ 미출근</div><div class="sv" style="color:var(--text2)">'+outC+'<span class="su"> 명</span></div></div>';
+}
+function renderHomeRoster(){
+  var st=load('staff',[]);var el=document.getElementById('home-roster');
+  var html=st.slice(0,4).map(srow).join('');
+  if(st.length>4)html+='<div style="padding:9px 0 2px;text-align:center;font-size:13px;color:var(--text2)">외 '+(st.length-4)+'명</div>';
+  el.innerHTML=html;
+}
+
+// ── 공통 행 렌더링 ──
+function srow(p){
+  var bk=(p.status==='in'||p.status==='late')&&!p.safe?'warn':p.status;
+  var bm={in:'b-in',out:'b-out',late:'b-late',warn:'b-warn'};
+  var bt={in:'출근',out:'미출근',late:'지각',warn:'점검미완'};
+  var gTag=p.gps?'<span class="tag" style="background:var(--grn-lt);color:var(--grn)">GPS✓</span>':'<span class="tag" style="background:var(--red-lt);color:var(--red)">GPS✗</span>';
+  return '<div class="srow"><div class="av" style="'+(p.status==='out'?'background:var(--gray2);color:var(--text2)':'')+'">'+p.name[0]+'</div><div class="si"><div class="sn">'+p.name+gTag+'</div><div class="sd">'+p.role+' · '+p.team+(p.time?' · '+p.time:' · 미출근')+'</div></div><span class="badge '+bm[bk]+'">'+bt[bk]+'</span></div>';
+}
+
+// ── 관리자 대시보드 통계 ──
+function renderAdminStats(){
+  var st=load('staff',[]);var inC=0,outC=0,lateC=0,warnC=0;
+  for(var i=0;i<st.length;i++){
+    var s=st[i];
+    if(s.status==='in'||s.status==='late'){inC++;if(s.status==='late')lateC++;if(!s.safe)warnC++;}
+    else outC++;
+  }
+  var total=st.length;
+  var pct=total>0?Math.round(inC/total*100):0;
+  // 헤더 칩에 관리자 이름
+  var chip=document.getElementById('adm-name-chip');if(chip&&CU)chip.textContent=CU.name+' 관리자';
+  // 통계 카드 4개 (출근율 % 추가)
+  document.getElementById('adm-stats').innerHTML=
+    '<div class="sbox" style="border-left:3px solid var(--grn)"><div class="sl">✅ 출근 완료</div><div class="sv" style="color:var(--grn)">'+inC+'<span class="su">/'+total+'명</span></div><div style="font-size:11px;color:var(--grn);margin-top:2px">출근율 '+pct+'%</div></div>'+
+    '<div class="sbox" style="border-left:3px solid var(--text2)"><div class="sl">❌ 미출근</div><div class="sv" style="color:var(--text2)">'+outC+'<span class="su"> 명</span></div><div style="font-size:11px;color:var(--text2);margin-top:2px">전체 '+total+'명</div></div>'+
+    '<div class="sbox" style="border-left:3px solid var(--red)"><div class="sl">⚠️ 지각</div><div class="sv" style="color:var(--red)">'+lateC+'<span class="su"> 명</span></div></div>'+
+    '<div class="sbox" style="border-left:3px solid #E65100"><div class="sl">🔔 점검 미완료</div><div class="sv" style="color:#E65100">'+warnC+'<span class="su"> 명</span></div></div>';
+  // 경고 배너
+  var issues=[];
+  if(outC>0)issues.push('미출근 <b>'+outC+'명</b>');
+  if(warnC>0)issues.push('안전점검 미완 <b>'+warnC+'명</b>');
+  var alertEl=document.getElementById('adm-alert');
+  alertEl.innerHTML=issues.length
+    ?'<div style="background:var(--red-lt);border-left:4px solid var(--red);border-radius:0 var(--rs) var(--rs) 0;padding:11px 14px;margin-bottom:4px"><div style="font-size:13px;color:var(--red);font-weight:700">⚠️ '+issues.join(' · ')+' — 즉시 확인 필요</div></div>'
+    :'<div style="background:var(--grn-lt);border-left:4px solid var(--grn);border-radius:0 var(--rs) var(--rs) 0;padding:11px 14px;margin-bottom:4px"><div style="font-size:13px;color:var(--grn);font-weight:700">✅ 이상 없음 — 모든 직원 정상</div></div>';
+  // 공지 표시
+  loadNoticeDisplay();
+  // 직원 수 카운터
+  var cnt=document.getElementById('roster-count');if(cnt)cnt.textContent='전체 '+total+'명';
+}
+
+// ── 직원 출근 필터·검색 ──
+function setFilt(f,btn){
+  curFilt=f;
+  var fbs=document.querySelectorAll('.fb');for(var i=0;i<fbs.length;i++)fbs[i].classList.remove('on');
+  btn.classList.add('on');filterRoster();
+}
+function renderRoster(list){
+  var el=document.getElementById('adm-roster');
+  if(!list||!list.length){el.innerHTML='<div style="padding:16px;text-align:center;font-size:13px;color:var(--text2)">해당 직원이 없습니다</div>';return;}
+  // 관리자 모드에서는 강제출근 버튼 추가
+  var html='';
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    var bk=(p.status==='in'||p.status==='late')&&!p.safe?'warn':p.status;
+    var bm={in:'b-in',out:'b-out',late:'b-late',warn:'b-warn'};
+    var bt={in:'출근',out:'미출근',late:'지각',warn:'점검미완'};
+    var gTag=p.gps?'<span class="tag" style="background:var(--grn-lt);color:var(--grn)">GPS✓</span>':'<span class="tag" style="background:var(--red-lt);color:var(--red)">GPS✗</span>';
+    var actionBtn='';
+    if(p.status==='out'){
+      actionBtn='<button onclick="forceCheckin('+p.id+')" style="padding:5px 9px;background:var(--grn-lt);color:var(--grn);border:1px solid var(--grn);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:30px">✅출근처리</button>';
+    } else if(!p.safe){
+      actionBtn='<button onclick="forceSafe('+p.id+')" style="padding:5px 9px;background:var(--org-lt);color:var(--org-dk);border:1px solid var(--org);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:30px">📋점검완료</button>';
+    } else {
+      actionBtn='<span class="badge '+bm[bk]+'">'+bt[bk]+'</span>';
+    }
+    html+='<div class="srow"><div class="av" style="'+(p.status==='out'?'background:var(--gray2);color:var(--text2)':'')+'">'+p.name[0]+'</div><div class="si"><div class="sn">'+p.name+gTag+'</div><div class="sd">'+p.role+' · '+p.team+(p.time?' · '+p.time:' · 미출근')+'</div></div>'+actionBtn+'</div>';
+  }
+  el.innerHTML=html;
+}
+function filterRoster(){
+  var q=document.getElementById('adm-search').value.trim();var list=load('staff',[]);
+  if(q){var r=[];for(var i=0;i<list.length;i++)if(list[i].name.indexOf(q)>-1)r.push(list[i]);list=r;}
+  if(curFilt==='warn'){var r=[];for(var i=0;i<list.length;i++)if((list[i].status==='in'||list[i].status==='late')&&!list[i].safe)r.push(list[i]);list=r;}
+  else if(curFilt!=='all'){var r=[];for(var i=0;i<list.length;i++)if(list[i].status===curFilt)r.push(list[i]);list=r;}
+  renderRoster(list);
+}
+
+// ── 관리자 강제 출근·점검 처리 ──
+function forceCheckin(id){
+  var t=getNow();var st=load('staff',[]);
+  for(var i=0;i<st.length;i++)if(st[i].id===id){st[i].status='in';st[i].time=t+'(관리자)';st[i].gps=false;break;}
+  save('staff',st);filterRoster();renderAdminStats();renderHomeStats();renderHomeRoster();
+  toast('✅ 출근 처리 완료 (관리자 권한)');
+}
+function forceSafe(id){
+  var st=load('staff',[]);
+  for(var i=0;i<st.length;i++)if(st[i].id===id){st[i].safe=true;break;}
+  save('staff',st);filterRoster();renderAdminStats();
+  toast('📋 안전점검 완료 처리 (관리자 권한)');
+}
+
+// ── 직원 등록·삭제 ──
+function addStaff(){
+  var name=document.getElementById('new-name').value.trim();
+  var role=document.getElementById('new-role').value;
+  var team=document.getElementById('new-team').value;
+  var phone=document.getElementById('new-phone').value.replace(/\D/g,'');
+  if(!name){setErr('staff-err','이름을 입력하세요');return;}
+  if(phone.length<10){setErr('staff-err','올바른 번호를 입력하세요 (10~11자리)');return;}
+  var staff=load('staff',[]);
+  for(var i=0;i<staff.length;i++)if(staff[i].phone===phone){setErr('staff-err','이미 등록된 번호입니다');return;}
+  staff.push({id:Date.now(),name:name,role:role,team:team,phone:phone,status:'out',time:'',gps:false,safe:false});
+  save('staff',staff);
+  document.getElementById('new-name').value='';document.getElementById('new-phone').value='';
+  renderStaffList();filterRoster();renderAdminStats();renderHomeStats();renderHomeRoster();
+  toast('✅ '+name+' '+role+'님 등록 완료!');
+}
+function deleteStaff(id){
+  var st=load('staff',[]);var target=null;
+  for(var i=0;i<st.length;i++)if(st[i].id===id){target=st[i];break;}
+  if(!confirm((target?target.name+' '+target.role+'님을 ':'이 직원을 ')+'삭제하시겠습니까?'))return;
+  var r=[];for(var i=0;i<st.length;i++)if(st[i].id!==id)r.push(st[i]);
+  save('staff',r);renderStaffList();filterRoster();renderAdminStats();renderHomeStats();renderHomeRoster();
+  toast('직원이 삭제됐습니다');
+}
+function renderStaffList(){
+  var staff=load('staff',[]);var el=document.getElementById('staff-list');
+  var cnt=document.getElementById('staff-count');if(cnt)cnt.textContent=staff.length;
+  if(!staff.length){el.innerHTML='<div style="padding:16px;text-align:center;font-size:13px;color:var(--text2)">등록된 직원이 없습니다</div>';return;}
+  var bk={in:'✅',out:'⬜',late:'⚠️'};
+  var html='';
+  for(var i=0;i<staff.length;i++){
+    var s=staff[i];
+    html+='<div class="srow">'+
+      '<div class="av">'+s.name[0]+'</div>'+
+      '<div class="si">'+
+        '<div class="sn">'+s.name+' <span class="badge b-org">'+s.role+'</span></div>'+
+        '<div class="sd">'+s.team+' · '+s.phone+'</div>'+
+      '</div>'+
+      '<button onclick="deleteStaff('+s.id+')" style="padding:6px 10px;background:var(--red-lt);color:var(--red);border:1px solid var(--red);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;min-height:30px">삭제</button>'+
+    '</div>';
+  }
+  el.innerHTML=html;
+}
+
+// ── 출근 초기화 (오늘 상태 리셋) ──
+function resetAllAttendance(){
+  if(!confirm('오늘 전체 직원 출근·퇴근·점검 상태를 초기화하시겠습니까?\n(출근기록 이력은 유지됩니다)'))return;
+  var st=load('staff',[]);
+  for(var i=0;i<st.length;i++){st[i].status='out';st[i].time='';st[i].gps=false;st[i].safe=false;}
+  save('staff',st);
+  renderAdminStats();filterRoster();renderStaffList();renderHomeStats();renderHomeRoster();
+  toast('🔄 전체 출근 상태가 초기화됐습니다');
+}
+
+// ── 출근기록 이력 전체 삭제 ──
+function clearAttendanceHistory(){
+  if(!confirm('저장된 출근기록 전체를 영구 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'))return;
+  if(!confirm('정말 삭제하시겠습니까? 마지막 확인입니다.'))return;
+  save('attendance',[]);
+  toast('🗑️ 출근기록이 삭제됐습니다');
+}
+
+// ── 공지사항 ──
+function saveNotice(){
+  var txt=document.getElementById('notice-inp').value.trim();
+  if(!txt){toast('⚠️ 공지 내용을 입력하세요');return;}
+  save('notice',txt);loadNoticeDisplay();
+  toast('📢 공지가 저장됐습니다');
+}
+function clearNotice(){
+  if(!confirm('공지를 삭제하시겠습니까?'))return;
+  save('notice','');loadNoticeDisplay();
+  toast('공지가 삭제됐습니다');
+}
+function loadNoticeDisplay(){
+  var txt=load('notice','');
+  var nd=document.getElementById('notice-display');var nt=document.getElementById('notice-text');
+  var ni=document.getElementById('notice-inp');
+  if(nd&&nt){nd.style.display=txt?'block':'none';if(nt)nt.textContent=txt;}
+  if(ni&&txt)ni.value=txt;
+}
+
+// ── 관리자 계정 ──
+function addAdmin(){
+  var admins=load('admins',[]);
+  if(admins.length>=2){setErr('admin-err','관리자는 최대 2명까지 등록 가능합니다');return;}
+  var name=document.getElementById('adm-new-name').value.trim();
+  var phone=document.getElementById('adm-new-phone').value.replace(/\D/g,'');
+  var pw=document.getElementById('adm-new-pw').value;
+  if(!name){setErr('admin-err','이름을 입력하세요');return;}
+  if(phone.length<10){setErr('admin-err','올바른 번호를 입력하세요');return;}
+  if(pw.length<4){setErr('admin-err','비밀번호는 4자리 이상이어야 합니다');return;}
+  for(var i=0;i<admins.length;i++)if(admins[i].phone===phone){setErr('admin-err','이미 등록된 번호입니다');return;}
+  admins.push({name:name,phone:phone,pw:pw});save('admins',admins);
+  document.getElementById('adm-new-name').value='';document.getElementById('adm-new-phone').value='';document.getElementById('adm-new-pw').value='';
+  renderAdminList();toast('✅ '+name+' 관리자 추가 완료!');
+}
+function deleteAdmin(phone){
+  var admins=load('admins',[]);if(admins.length<=1){toast('관리자는 최소 1명이 필요합니다');return;}
+  if(CU&&phone===CU.phone){toast('본인 계정은 삭제할 수 없습니다');return;}
+  if(!confirm('이 관리자를 삭제하시겠습니까?'))return;
+  var r=[];for(var i=0;i<admins.length;i++)if(admins[i].phone!==phone)r.push(admins[i]);
+  save('admins',r);renderAdminList();toast('관리자가 삭제됐습니다');
+}
+function renderAdminList(){
+  var admins=load('admins',[]);var el=document.getElementById('admin-list');
+  var html='';
+  for(var i=0;i<admins.length;i++){
+    var a=admins[i];var isMe=CU&&a.phone===CU.phone;
+    html+='<div class="srow">'+
+      '<div class="av" style="background:var(--blue-lt);color:var(--blue)">관</div>'+
+      '<div class="si">'+
+        '<div class="sn">'+a.name+' <span class="adm-chip">관리자</span>'+(isMe?' <span style="font-size:10px;color:var(--org-dk)">(나)</span>':'')+'</div>'+
+        '<div class="sd">'+a.phone+'</div>'+
+      '</div>'+
+      (admins.length>1&&!isMe?'<button onclick="deleteAdmin(\''+a.phone+'\')" style="padding:6px 10px;background:var(--red-lt);color:var(--red);border:1px solid var(--red);border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;min-height:30px">삭제</button>':'<span style="font-size:11px;color:var(--text3)">'+(isMe?'본인':'필수')+'</span>')+
+    '</div>';
+  }
+  el.innerHTML=html;
+  document.getElementById('admin-add-wrap').style.display=admins.length>=2?'none':'block';
+}
+
+// ── 비밀번호 변경 ──
+function changePw(){
+  var old=document.getElementById('pw-old').value;
+  var nw=document.getElementById('pw-new').value;
+  var nw2=document.getElementById('pw-new2').value;
+  var admins=load('admins',[]);var idx=-1;
+  for(var i=0;i<admins.length;i++)if(CU&&admins[i].phone===CU.phone){idx=i;break;}
+  if(idx===-1){setErr('pw-err','관리자 계정을 찾을 수 없습니다');return;}
+  if(admins[idx].pw!==old){setErr('pw-err','현재 비밀번호가 올바르지 않습니다');return;}
+  if(nw.length<4){setErr('pw-err','새 비밀번호는 4자리 이상이어야 합니다');return;}
+  if(nw!==nw2){setErr('pw-err','새 비밀번호가 일치하지 않습니다');return;}
+  admins[idx].pw=nw;save('admins',admins);
+  document.getElementById('pw-old').value='';document.getElementById('pw-new').value='';document.getElementById('pw-new2').value='';
+  toast('✅ 비밀번호가 변경됐습니다');
+}
+
+// ── 공지 섹션으로 스크롤 ──
+function admGoSection(id){
+  var el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── 무사고 통계 ──
+function updateAccStats(){
+  var st=load('staff',[]);var total=st.length,inC=0,safeC=0;
+  for(var i=0;i<st.length;i++){if(st[i].status==='in'||st[i].status==='late')inC++;if(st[i].safe)safeC++;}
+  var rate=total>0?Math.round(inC/total*100):0;var comp=total>0?Math.round(safeC/total*100):0;
+  var start=new Date('2024-04-19'),today=new Date();
+  var days=Math.max(0,Math.floor((today-start)/(1000*60*60*24)));
+  var pct=Math.min(Math.round(days/365*100),100);
+  var d=document.getElementById('acc-days');if(d)d.textContent=days;
+  var bar=document.getElementById('acc-bar');if(bar)bar.style.width=pct+'%';
+  var bt=document.getElementById('acc-bar-txt');if(bt)bt.textContent=days+' / 365일 ('+pct+'%)';
+  var r=document.getElementById('acc-rate');if(r)r.innerHTML=rate+'<span class="su"> %</span>';
+  var t2=document.getElementById('acc-total');if(t2)t2.innerHTML=total+'<span class="su"> 명</span>';
+  var c=document.getElementById('acc-comp');if(c)c.innerHTML=comp+'<span class="su"> %</span>';
+  var teams=['수거 1팀','수거 2팀','수거 3팀','수거 4팀'];
+  var ta=document.getElementById('team-acc');
+  if(ta){var h='';for(var i=0;i<teams.length;i++)h+='<div class="srow"><div class="si"><div class="sn">'+teams[i]+'</div></div><span style="font-size:16px;font-weight:900;color:'+(i<2?'var(--org)':'var(--grn)')+'">'+Math.max(0,days-i*46)+'일</span></div>';ta.innerHTML=h;}
+}
+
+// ── AI 상담 (Anthropic API) ──
+var AI_SYS='당신은 나눔환경(성남시 생활폐기물 수집·운반 대행업체) 전용 AI 도우미입니다.\n'+
+  '50인 미만 소규모 사업체로 성남시와 계약하여 업무를 수행합니다.\n\n'+
+  '전문 영역:\n'+
+  '1. 노무: 야간수당(22:00~06:00, 통상임금×0.5 가산), 퇴직금(평균임금×30일×근속연수), 연차휴가, 근로계약서, 4대보험\n'+
+  '2. 안전: 특수건강검진(6개월~1년 주기), 보호장구, 산재, 안전교육(산업안전보건법)\n'+
+  '3. 폐기물법: 폐기물관리법, 수집운반 허가, 차량 변경허가 절차, 운반일지 2년 보관\n'+
+  '4. 입찰: 2027~2029년 나라장터 입찰 준비, 지방계약법, 실적증명서, PQ서류\n\n'+
+  '답변 원칙:\n'+
+  '- 핵심 결론 먼저 2~3줄 요약\n'+
+  '- 관련 법령 조문 제시 (예: 근기법 §56)\n'+
+  '- 계산 시 공식과 예시 포함\n'+
+  '- 불확실한 경우 "노무사·법무사 상담 권장" 명시\n'+
+  '- 친절하고 실무적으로, 한국어로 답변\n'+
+  '- 이모지 활용하여 가독성 향상';
+
+function quickAsk(q){
+  var inp=document.getElementById('chat-inp');if(inp)inp.value=q;
+  sendChat();
+}
+function chatKeydown(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+
+async function sendChat(){
+  var inp=document.getElementById('chat-inp');
+  var box=document.getElementById('chat-box');
+  var btn=document.getElementById('chat-send');
+  if(!inp||!box)return;
+  var text=inp.value.trim();if(!text)return;
+  inp.value='';
+
+  // 사용자 메시지
+  var uDiv=document.createElement('div');uDiv.className='chat-msg chat-user';uDiv.textContent=text;box.appendChild(uDiv);
+  chatHistory.push({role:'user',content:text});
+  box.scrollTop=box.scrollHeight;
+
+  // 로딩
+  var lDiv=document.createElement('div');lDiv.className='chat-msg chat-loading';lDiv.textContent='🤔 답변 작성 중...';box.appendChild(lDiv);
+  box.scrollTop=box.scrollHeight;
+  if(btn)btn.disabled=true;
+
+  try{
+    var msgs=chatHistory.slice(-10); // 최근 10개만
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:AI_SYS,
+        messages:msgs
+      })
+    });
+    var data=await res.json();
+    lDiv.remove();
+    var aiText='';
+    if(data.content&&data.content.length){
+      for(var i=0;i<data.content.length;i++)if(data.content[i].type==='text')aiText+=data.content[i].text;
+    }
+    if(!aiText)aiText='⚠️ 답변을 받지 못했습니다. 다시 시도해주세요.';
+    chatHistory.push({role:'assistant',content:aiText});
+    var aDiv=document.createElement('div');aDiv.className='chat-msg chat-ai';
+    aDiv.innerHTML=aiText.replace(/\n/g,'<br>');box.appendChild(aDiv);
+  }catch(err){
+    lDiv.remove();
+    var eDiv=document.createElement('div');eDiv.className='chat-msg chat-ai';
+    eDiv.textContent='⚠️ 네트워크 오류가 발생했습니다. 인터넷 연결을 확인하세요.';box.appendChild(eDiv);
+  }finally{
+    if(btn)btn.disabled=false;
+    box.scrollTop=box.scrollHeight;
+  }
+}
+
+// ── 계산기 ──
+function calcNight(){
+  var hourly=parseFloat(document.getElementById('c-hourly').value)||0;
+  var nightH=parseFloat(document.getElementById('c-nighours').value)||0;
+  var ot=parseFloat(document.getElementById('c-ot').value)||0;
+  var holi=parseFloat(document.getElementById('c-holi').value)||0;
+  if(!hourly||!nightH){toast('⚠️ 시급과 야간시간을 입력하세요');return;}
+
+  // 기본급 (정규 근무 가정: 8시간)
+  var base=hourly*8;
+  // 야간 가산 (×0.5)
+  var nightAdd=hourly*0.5*nightH;
+  // 연장 가산 (×0.5 추가, 즉 연장은 1.5배 → 가산분 0.5×h)
+  var otAdd=hourly*0.5*ot;
+  // 휴일 (8h이하: ×1.5, 초과: ×2.0)
+  var holiPay=0;
+  if(holi>0){
+    var h8=Math.min(holi,8);var hOver=Math.max(0,holi-8);
+    holiPay=hourly*1.5*h8+hourly*2.0*hOver;
+  }
+  var total=base+nightAdd+otAdd+holiPay;
+
+  var res=document.getElementById('res-night');
+  document.getElementById('res-night-n').textContent=fmt(Math.round(total));
+  document.getElementById('res-night-s').innerHTML=
+    '기본급 '+fmt(base)+' + 야간가산 '+fmt(Math.round(nightAdd))+
+    (ot?' + 연장가산 '+fmt(Math.round(otAdd)):'')+
+    (holi?' + 휴일수당 '+fmt(Math.round(holiPay)):'')+
+    '<br>시급 '+fmt(hourly)+' 기준';
+  res.style.display='block';
+}
+
+function calcRetire(){
+  var wage=parseFloat(document.getElementById('c-wage3m').value)||0;
+  var days=parseFloat(document.getElementById('c-days3m').value)||0;
+  var tenure=parseFloat(document.getElementById('c-tenure').value)||0;
+  if(!wage||!days||!tenure){toast('⚠️ 모든 항목을 입력하세요');return;}
+  if(tenure<365){toast('⚠️ 퇴직금은 근속 1년 이상부터 발생합니다');return;}
+  var avgWage=wage/days; // 일 평균임금
+  var retire=avgWage*30*(tenure/365);
+
+  var res=document.getElementById('res-retire');
+  document.getElementById('res-retire-n').textContent=fmt(Math.round(retire));
+  document.getElementById('res-retire-s').innerHTML=
+    '평균임금 '+fmt(Math.round(avgWage))+'원/일 × 30일 × '+(tenure/365).toFixed(2)+'년<br>'+
+    '근속 '+Math.floor(tenure/365)+'년 '+Math.round((tenure%365)/30)+'개월';
+  res.style.display='block';
+}
+
+function calcLeave(){
+  var years=parseFloat(document.getElementById('c-years').value);
+  if(isNaN(years)||years<0){toast('⚠️ 근속연수를 입력하세요');return;}
+  var days,desc;
+  if(years<1){
+    days=Math.floor(years*12);if(days>11)days=11;
+    desc='1년 미만: 매월 개근 시 1일 (최대 11일)';
+  }else{
+    days=15+Math.floor((years-1)/2);if(days>25)days=25;
+    desc=years+'년차: 15일 기본 + '+(Math.floor((years-1)/2))+'일 가산';
+  }
+  var res=document.getElementById('res-leave');
+  document.getElementById('res-leave-n').textContent=days+' 일';
+  document.getElementById('res-leave-s').innerHTML=desc+'<br>근기법 §60';
+  res.style.display='block';
+}
+
+// ── 로그아웃 ──
+function logout(){
+  if(!confirm('로그아웃 하시겠습니까?'))return;
+  CU=null;ckDone=0;signed=false;curFilt='all';chatHistory=[];
+  document.getElementById('app').style.display='none';
+  document.getElementById('tab-admin').style.display='none';
+  document.getElementById('inp-name').value='';document.getElementById('inp-phone').value='';
+  document.getElementById('login-err').textContent='';
+  document.getElementById('btn-ci').style.display='block';
+  var co=document.getElementById('btn-co');co.style.display='none';co.disabled=false;co.textContent='🏠 퇴근 체크하기';
+  var ss=document.querySelectorAll('.screen');for(var i=0;i<ss.length;i++)ss[i].classList.remove('active');
+  document.getElementById('scr-home').classList.add('active');
+  var ts=document.querySelectorAll('.tab');for(var i=0;i<ts.length;i++)ts[i].classList.remove('active');
+  ts[0].classList.add('active');
+  document.getElementById('screen-login').className='show';
+}
+</script>
+
+</body>
+</html>
